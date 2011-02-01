@@ -1,0 +1,7 @@
+###############################################################################
+## Black Box Definition File ##################################################
+###############################################################################
+
+Files
+###############################################################################
+org_frame_fifo.edn, org_frame_fifo_fifo_generator_v2_1_as_1.ngc, org_frame_fifo_fifo_generator_v2_1_as_1_blkmemdp_v6_2_xst.edn, seg_frame_fifo.edn, seg_frame_fifo_fifo_generator_v2_1_as_1.ngc, seg_frame_fifo_fifo_generator_v2_1_as_1_blkmemdp_v6_2_xst.edn, hfdfifo.edn, hfdfifo_fifo_generator_v2_1_ss_1.ngc, hfdfifo_fifo_generator_v2_1_ss_1_blkmemdp_v6_2_xst.edn, sqrt.edn

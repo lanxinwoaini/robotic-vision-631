@@ -1,0 +1,6 @@
+# Output products list for <frame_fifo_16bit>
+frame_fifo_16bit.ngc
+frame_fifo_16bit.vhd
+frame_fifo_16bit.vho
+frame_fifo_16bit.xco
+frame_fifo_16bit_flist.txt

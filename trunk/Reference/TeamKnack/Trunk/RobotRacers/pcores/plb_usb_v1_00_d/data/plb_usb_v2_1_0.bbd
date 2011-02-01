@@ -1,0 +1,7 @@
+###############################################################################
+## Black Box Definition File ##################################################
+###############################################################################
+
+Files
+###############################################################################
+usb_fifo_17.edn, usb_fifo_17_fifo_generator_v2_2_xst_1.ngc, usb_fifo_16.edn, usb_fifo_16_fifo_generator_v2_2_xst_1.ngc, usb_fifo_9.edn, usb_fifo_9_fifo_generator_v2_2_xst_1.ngc, usb_fifo_8.edn, usb_fifo_8_fifo_generator_v2_2_xst_1.ngc, plb_burst_fifo.edn, plb_burst_fifo_fifo_generator_v2_1_as_1.ngc, plb_burst_fifo_fifo_generator_v2_1_as_1_blkmemdp_v6_2_xst.edn

@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RobotRacerVision", "RobotRacerVision\RobotRacerVision.vcproj", "{63CB0DDA-7A51-4623-A1DA-A21EEACA63B6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HSVaverage", "HSVaverage\HSVaverage.vcproj", "{DABE0F32-BA5D-4880-AF25-567BDD830ADF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HSVrangefinder", "HSVrangefinder\HSVrangefinder.vcproj", "{C1727D12-715A-4E0B-9021-E827AC4FAABE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Convolution", "Convolution\Convolution.vcproj", "{D3B337C6-1359-4677-914D-70EB57AA65FF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MultiView", "MultiView\MultiView.vcproj", "{0FE0F433-948E-429F-B41B-A18D3FA03BF3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StereoVision", "StereoVision\StereoVision.vcproj", "{EB1D031A-1AF6-4B91-BFC0-0ED8E48A4AA1}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KnackCompetition", "KnackCompetition\KnackCompetition.vcproj", "{F988DF31-A54E-4F71-84F8-466C226195E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63CB0DDA-7A51-4623-A1DA-A21EEACA63B6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{63CB0DDA-7A51-4623-A1DA-A21EEACA63B6}.Debug|Win32.Build.0 = Debug|Win32
+		{63CB0DDA-7A51-4623-A1DA-A21EEACA63B6}.Release|Win32.ActiveCfg = Release|Win32
+		{63CB0DDA-7A51-4623-A1DA-A21EEACA63B6}.Release|Win32.Build.0 = Release|Win32
+		{DABE0F32-BA5D-4880-AF25-567BDD830ADF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DABE0F32-BA5D-4880-AF25-567BDD830ADF}.Debug|Win32.Build.0 = Debug|Win32
+		{DABE0F32-BA5D-4880-AF25-567BDD830ADF}.Release|Win32.ActiveCfg = Release|Win32
+		{DABE0F32-BA5D-4880-AF25-567BDD830ADF}.Release|Win32.Build.0 = Release|Win32
+		{C1727D12-715A-4E0B-9021-E827AC4FAABE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C1727D12-715A-4E0B-9021-E827AC4FAABE}.Debug|Win32.Build.0 = Debug|Win32
+		{C1727D12-715A-4E0B-9021-E827AC4FAABE}.Release|Win32.ActiveCfg = Release|Win32
+		{C1727D12-715A-4E0B-9021-E827AC4FAABE}.Release|Win32.Build.0 = Release|Win32
+		{D3B337C6-1359-4677-914D-70EB57AA65FF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D3B337C6-1359-4677-914D-70EB57AA65FF}.Debug|Win32.Build.0 = Debug|Win32
+		{D3B337C6-1359-4677-914D-70EB57AA65FF}.Release|Win32.ActiveCfg = Release|Win32
+		{D3B337C6-1359-4677-914D-70EB57AA65FF}.Release|Win32.Build.0 = Release|Win32
+		{0FE0F433-948E-429F-B41B-A18D3FA03BF3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0FE0F433-948E-429F-B41B-A18D3FA03BF3}.Debug|Win32.Build.0 = Debug|Win32
+		{0FE0F433-948E-429F-B41B-A18D3FA03BF3}.Release|Win32.ActiveCfg = Release|Win32
+		{0FE0F433-948E-429F-B41B-A18D3FA03BF3}.Release|Win32.Build.0 = Release|Win32
+		{EB1D031A-1AF6-4B91-BFC0-0ED8E48A4AA1}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EB1D031A-1AF6-4B91-BFC0-0ED8E48A4AA1}.Debug|Win32.Build.0 = Debug|Win32
+		{EB1D031A-1AF6-4B91-BFC0-0ED8E48A4AA1}.Release|Win32.ActiveCfg = Release|Win32
+		{EB1D031A-1AF6-4B91-BFC0-0ED8E48A4AA1}.Release|Win32.Build.0 = Release|Win32
+		{F988DF31-A54E-4F71-84F8-466C226195E6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F988DF31-A54E-4F71-84F8-466C226195E6}.Debug|Win32.Build.0 = Debug|Win32
+		{F988DF31-A54E-4F71-84F8-466C226195E6}.Release|Win32.ActiveCfg = Release|Win32
+		{F988DF31-A54E-4F71-84F8-466C226195E6}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,109 @@
+##############################################################################
+##
+## ***************************************************************************
+## **                                                                       **
+## ** Copyright (c) 1995-2005 Xilinx, Inc.  All rights reserved.            **
+## **                                                                       **
+## ** You may copy and modify these files for your own internal use solely  **
+## ** with Xilinx programmable logic devices and Xilinx EDK system or       **
+## ** create IP modules solely for Xilinx programmable logic devices and    **
+## ** Xilinx EDK system. No rights are granted to distribute any files      **
+## ** unless they are distributed in Xilinx programmable logic devices.     **
+## **                                                                       **
+## ***************************************************************************
+##
+##############################################################################
+## Filename:          C:\Projects\EDK\Helios_1B_Demo_plb_usb\pcores\plb_camera_v1_00_a\data\plb_camera_v1_00_a.pao
+## Description:       Peripheral Analysis Order
+## Date:              Mon Feb 27 08:07:33 2006 (by Create and Import Peripheral Wizard)
+##############################################################################
+
+# Peripheral Analyze Order (.pao) file for the
+# PLB IPIF Version 2.01.a
+#
+# ----- Proc Common Library Files -----------------
+lib proc_common_v1_00_b proc_common_pkg vhdl 
+lib proc_common_v1_00_b family  
+lib proc_common_v1_00_b or_muxcy  
+lib proc_common_v1_00_b or_gate  
+lib proc_common_v1_00_b pselect  
+lib proc_common_v1_00_b valid_be  
+lib proc_common_v1_00_b ld_arith_reg
+lib proc_common_v1_00_b ld_arith_reg2  
+lib proc_common_v1_00_b down_counter  
+lib proc_common_v1_00_b inferred_lut4
+lib proc_common_v1_00_b srl_fifo
+lib proc_common_v1_00_b srl_fifo2
+#
+#----- IPIF Common Library FIles ------------------ 
+lib ipif_common_v1_00_e ipif_pkg  
+lib ipif_common_v1_00_e ipif_steer  
+lib ipif_common_v1_00_e interrupt_control  
+lib ipif_common_v1_00_e dma_sg_pkg
+lib ipif_common_v1_00_e dma_sg_cmp
+lib ipif_common_v1_00_e ctrl_reg
+lib ipif_common_v1_00_e burst_size_calc
+lib ipif_common_v1_00_e dma_sg   
+lib ipif_common_v1_00_e dma_sg_sim
+#
+# DRE Library Components
+lib dre_v1_00_a dre_support
+lib dre_v1_00_a dre_64_top
+#
+#
+#----- PLB IPIF Library Files ---------------------
+lib plb_ipif_v2_01_a    pf_counter_bit  
+lib plb_ipif_v2_01_a    pf_counter  
+lib plb_ipif_v2_01_a    pf_counter_top  
+lib plb_ipif_v2_01_a    pf_occ_counter  
+lib plb_ipif_v2_01_a    pf_occ_counter_top  
+lib plb_ipif_v2_01_a    pf_adder_bit  
+lib plb_ipif_v2_01_a    pf_adder  
+lib plb_ipif_v2_01_a    pf_dpram_select  
+lib plb_ipif_v2_01_a    srl16_fifo  
+lib plb_ipif_v2_01_a    pf_dly1_mux  
+lib plb_ipif_v2_01_a    rdpfifo_dp_cntl  
+lib plb_ipif_v2_01_a    ipif_control_rd  
+lib plb_ipif_v2_01_a    rdpfifo_top  
+lib plb_ipif_v2_01_a    ipif_control_wr_dre  
+lib plb_ipif_v2_01_a    wrpfifo_dp_cntl  
+lib plb_ipif_v2_01_a    wrpfifo_top  
+lib plb_ipif_v2_01_a    addr_reg_cntr_brst  
+lib plb_ipif_v2_01_a    address_decoder
+lib plb_ipif_v2_01_a    determinate_timer 
+lib plb_ipif_v2_01_a    plb_slave_attach_dtime_dma  
+lib plb_ipif_v2_01_a    master_attachment 
+lib plb_ipif_v2_01_a    plb_sesr_sear  
+lib plb_ipif_v2_01_a    ipif_reset 
+lib plb_ipif_v2_01_a    plb_dma_sg
+lib plb_ipif_v2_01_a    plb_ipif  
+#
+# --- End of list ------------------------------
+
+
+lib plb_camera plb_camera vhdl
+lib plb_camera user_logic vhdl
+lib plb_camera cam_ser vhdl
+lib plb_camera frame_sync vhdl
+lib plb_camera size_buffer vhdl
+
+lib plb_camera size_buffer_onebit vhdl
+lib plb_camera line_buffer vhdl
+lib plb_camera convolution vhdl
+lib plb_camera conv_buffer vhdl
+
+lib plb_camera camera_rgb vhdl
+lib plb_camera hsv_conv vhdl
+lib plb_camera inv_table vhdl
+lib plb_camera segment_buffer vhdl
+lib plb_camera segmentation vhdl
+lib plb_camera threshold vhdl
+lib plb_camera hsv_buffer vhdl
+
+
+
+
+
+
+
+

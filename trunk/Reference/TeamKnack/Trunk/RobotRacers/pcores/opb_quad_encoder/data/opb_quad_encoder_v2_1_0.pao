@@ -1,0 +1,3 @@
+lib opb_quad_encoder pselect
+lib opb_quad_encoder quad_encoder
+lib opb_quad_encoder opb_quad_encoder

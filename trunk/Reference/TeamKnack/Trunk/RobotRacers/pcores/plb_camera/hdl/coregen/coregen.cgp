@@ -1,0 +1,20 @@
+# Date: Tue Mar 10 17:12:42 2009
+SET flowvendor = Synopsys
+SET vhdlsim = True
+SET verilogsim = False
+SET workingdirectory = C:\matt\RobotRacer\RobotRacers\pcores\plb_camera\hdl\coregen\tmp
+SET speedgrade = -10
+SET simulationfiles = Behavioral
+SET asysymbol = False
+SET addpads = False
+SET device = xc4vfx20
+SET implementationfiletype = Ngc
+SET busformat = BusFormatAngleBracketNotRipped
+SET foundationsym = False
+SET package = ff672
+SET createndf = False
+SET designentry = VHDL
+SET devicefamily = virtex4
+SET formalverification = False
+SET removerpms = False
+

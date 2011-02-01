@@ -1,0 +1,9 @@
+-batch 
+-create plb_usb 
+-ver 1.00.a 
+-dir C:\Projects\EDK\Helios_1B_Demo_plb_usb 
+-lang vhdl 
+-bus plb s 
+-xps 
+-ise 
+-driver 

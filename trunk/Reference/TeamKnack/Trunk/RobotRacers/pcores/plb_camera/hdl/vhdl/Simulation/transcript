@@ -1,0 +1,64 @@
+# Reading C:/Modeltech_pe_edu_6.3c/tcl/vsim/pref.tcl 
+dir
+#  Volume in drive C has no label.
+#  Volume Serial Number is F470-C734
+# 
+#  Directory of C:\matt\RobotRacer\RobotRacers\pcores\plb_camera\hdl\vhdl\Simulation
+# 
+# 03/10/2008  08:15 PM    <DIR>          .
+# 03/10/2008  08:15 PM    <DIR>          ..
+# 03/10/2008  08:11 PM             1,466 hsv_buffer.do
+# 03/10/2009  08:01 PM             8,749 line_buffer.do
+# 03/10/2008  08:15 PM               839 modelsim.exe.lnk
+# 03/06/2009  12:28 PM            42,741 modelsim.ini
+# 03/10/2008  08:11 PM    <DIR>          plb_camera
+# 03/10/2009  08:01 PM             2,559 segment_buffer.do
+# 03/10/2008  08:15 PM                60 transcript
+# 03/06/2009  12:28 PM    <DIR>          unisims
+# 03/06/2009  12:34 PM    <DIR>          unisim_library
+# 03/10/2009  08:02 PM               970 user_hsv.do
+#                7 File(s)         57,384 bytes
+#                5 Dir(s)  42,495,332,352 bytes free
+vcom -work plb_camera hsv_conv.vhd
+# Model Technology ModelSim PE Student Edition vcom 6.3c Compiler 2007.09 Sep 11 2007
+# ** Error: (vcom-7) Failed to open design unit file "hsv_conv.vhd" in read mode.
+# No such file or directory. (errno = ENOENT)
+# C:/Modeltech_pe_edu_6.3c/win32pe_edu/vcom failed.
+vcom -work plb_camera ../hsv_conv.vhd
+# Model Technology ModelSim PE Student Edition vcom 6.3c Compiler 2007.09 Sep 11 2007
+# -- Loading package standard
+# -- Loading package std_logic_1164
+# -- Loading package numeric_std
+# -- Loading package std_logic_arith
+# -- Loading package std_logic_signed
+# -- Compiling entity hsv_conv
+# -- Compiling architecture behavioral of hsv_conv
+vsim -novopt plb_camera.hsv_conv
+# //  ModelSim PE Student Edition 6.3c Sep 11 2007 
+# //
+# //  Copyright 1991-2007 Mentor Graphics Corporation
+# //              All Rights Reserved.
+# //
+# //  THIS WORK CONTAINS TRADE SECRET AND 
+# //  PROPRIETARY INFORMATION WHICH IS THE PROPERTY
+# //  OF MENTOR GRAPHICS CORPORATION OR ITS LICENSORS
+# //  AND IS SUBJECT TO LICENSE TERMS.
+# //
+# 
+# // NOT FOR CORPORATE OR PRODUCTION USE.
+# // THE ModelSim PE Student Edition IS NOT A SUPPORTED PRODUCT.
+# // FOR HIGHER EDUCATION PURPOSES ONLY
+# //
+# vsim -novopt plb_camera.hsv_conv 
+# ** FATAL ERROR: ModelSim PE Student Edition licensing failure due to one or more problems with the license key such as:
+# - it is not found
+# - it has expired
+# - it is not for this user
+# - it is not for this computer
+# - it is not for this version of ModelSim PE Student Edition.
+# 
+# Please go to http://www.model.com and download an updated copy of the ModelSim PE Student Edition.
+# Error loading design
+vsim -novopt plb_camera.hsv_conv
+# vsim -novopt plb_camera.hsv_conv 
+# Error loading design

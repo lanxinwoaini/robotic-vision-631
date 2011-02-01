@@ -1,0 +1,14 @@
+OPTION psf_version = 2.1;
+
+BEGIN driver plb_camera
+
+ OPTION supported_peripherals = (plb_camera);
+
+ PARAM name = level, desc = "Driver Level", type = int, default = 0, range = (0)
+
+ BEGIN BLOCK, dep = (level = 0)
+#  OPTION depends = (common_v1_00_a);
+  OPTION copyfiles = (plb_camera.c plb_camera.h Makefile);
+ END BLOCK
+
+END driver
