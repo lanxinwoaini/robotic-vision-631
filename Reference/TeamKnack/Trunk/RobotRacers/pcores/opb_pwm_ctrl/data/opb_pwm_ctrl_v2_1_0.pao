@@ -1,0 +1,3 @@
+lib opb_pwm_ctrl pselect
+lib opb_pwm_ctrl pwm_ctrl
+lib opb_pwm_ctrl opb_pwm_ctrl

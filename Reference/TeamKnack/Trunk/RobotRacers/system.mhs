@@ -1,0 +1,427 @@
+
+
+ PARAMETER VERSION = 2.1.0
+
+
+# #### Clock and Reset Signals ####
+ PORT sys_clk_in = sys_clk_in, DIR = I
+ PORT sys_rst_in = sys_rst_in, DIR = I
+# #### UART Signals ####
+ PORT uart_rx = uart_rx, DIR = I
+ PORT uart_tx = uart_tx, DIR = O
+# #### Wireless Transceiver Signals ####
+ PORT wireless_rx = wireless_rx, DIR = I
+ PORT wireless_tx = wireless_tx, DIR = O
+ PORT wireless_cts_n = wireless_cts_n, DIR = IO
+# #### GPIO Signals ####
+ PORT gpio_helios = gpio_helios, VEC = [4:0], DIR = IO
+# #### SRAM Signals ####
+ PORT sram_zz = sram_zz, DIR = IO
+# #### Flash Signals ####
+ PORT flash_rp_n = flash_rp_n, DIR = IO
+# #### SDRAM Signals ####
+ PORT sdram_clk = sdram_clk, DIR = O
+ PORT sdram_clk_fb = sdram_clk_fb, DIR = I
+ PORT sdram_cke = sdram_cke, DIR = O
+ PORT sdram_cs_n = sdram_cs_n, DIR = O
+ PORT sdram_ras_n = sdram_ras_n, DIR = O
+ PORT sdram_cas_n = sdram_cas_n, DIR = O
+ PORT sdram_we_n = sdram_we_n, DIR = O
+ PORT sdram_dqm = sdram_dqm, VEC = [3:0], DIR = O
+ PORT sdram_ba = sdram_ba, VEC = [1:0], DIR = O
+ PORT sdram_addr = sdram_addr, VEC = [11:0], DIR = O
+ PORT sdram_data = sdram_data, VEC = [31:0], DIR = IO
+# #### Compass Signals ####
+# #### Servo/ESC PWM Signals ####
+ PORT pwm_servo = pwm_servo, DIR = O
+ PORT pwm_esc = pwm_esc, DIR = O
+# #### Encoder Signals ####
+ PORT encoder_a = encoder_a, DIR = I
+ PORT encoder_b = encoder_b, DIR = I
+# #### Camera Signals ####
+ PORT cam0_data = cam0_data, VEC = [7:0], DIR = I
+ PORT cam0_frame_valid = cam0_frame_valid, DIR = I
+ PORT cam0_line_valid = cam0_line_valid, DIR = I
+ PORT cam0_pixclk = cam0_pixclk, DIR = I
+ PORT cam0_sclk = cam0_sclk, DIR = O
+ PORT cam0_sdata = cam0_sdata, DIR = IO
+ PORT cam_reset_n = net_vcc, DIR = O
+ PORT cam_standby = net_gnd, DIR = O
+# #### USB Signals ####
+ PORT usb_if_clk = usb_if_clk, DIR = I
+ PORT usb_full_n = usb_full_n, DIR = I
+ PORT usb_empty_n = usb_empty_n, DIR = I
+ PORT usb_alive = usb_alive, DIR = I
+ PORT usb_sloe_n = usb_sloe_n, DIR = O
+ PORT usb_slrd_n = usb_slrd_n, DIR = O
+ PORT usb_slwr_n = usb_slwr_n, DIR = O
+ PORT usb_pktend_n = usb_pktend_n, DIR = O
+ PORT usb_fifoaddr = usb_fifoaddr, DIR = O, VEC = [1:0]
+ PORT usb_fd = usb_fd, DIR = IO, VEC = [15:0]
+
+
+# #### Power PC Block ####
+BEGIN ppc405_virtex4
+ PARAMETER INSTANCE = ppc405_0
+ PARAMETER HW_VER = 1.01.a
+ BUS_INTERFACE JTAGPPC = jtagppc_0_0
+ BUS_INTERFACE DPLB = plb_v34_0
+ BUS_INTERFACE IPLB = plb_v34_0
+ PORT PLBCLK = sys_clk
+ PORT C405RSTCHIPRESETREQ = resetchipreq
+ PORT C405RSTCORERESETREQ = resetcorereq
+ PORT C405RSTSYSRESETREQ = resetsysreq
+ PORT RSTC405RESETCHIP = resetchip
+ PORT RSTC405RESETCORE = resetcore
+ PORT RSTC405RESETSYS = resetsys
+ PORT EICC405EXTINPUTIRQ = ext_int
+ PORT CPMC405CLOCK = cpu_clk
+END
+
+# #### JTAG Interface ####
+BEGIN jtagppc_cntlr
+ PARAMETER INSTANCE = jtagppc_cntlr_0
+ PARAMETER HW_VER = 2.00.a
+ BUS_INTERFACE JTAGPPC0 = jtagppc_0_0
+END
+
+# #### Reset Circuit ####
+BEGIN proc_sys_reset
+ PARAMETER INSTANCE = proc_sys_reset_0
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_EXT_RESET_HIGH = 0
+ PORT Dcm_locked = dcm_locked
+ PORT Aux_Reset_In = net_gnd
+ PORT Slowest_sync_clk = sys_clk
+ PORT Bus_Struct_Reset = sys_rst
+ PORT Ext_Reset_In = sys_rst_in
+ PORT Chip_Reset_Req = resetchipreq
+ PORT Core_Reset_Req = resetcorereq
+ PORT System_Reset_Req = resetsysreq
+ PORT Rstc405resetcore = resetchip
+ PORT Rstc405resetchip = resetcore
+ PORT Rstc405resetsys = resetsys
+END
+
+# #### Main System DCM for System Clock ####
+BEGIN dcm_module
+ PARAMETER INSTANCE = dcm_0
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_CLKIN_PERIOD = 10.000000
+ PARAMETER C_EXT_RESET_HIGH = 0
+ PARAMETER C_CLK0_BUF = TRUE
+ PARAMETER C_CLKFX_BUF = TRUE
+ PARAMETER C_CLKFX_DIVIDE = 1
+ PARAMETER C_CLKFX_MULTIPLY = 3
+ PARAMETER C_DFS_FREQUENCY_MODE = HIGH
+ PORT CLKIN = sys_clk_in
+ PORT CLK0 = sys_clk
+ PORT CLKFX = cpu_clk
+ PORT CLKFB = sys_clk
+ PORT RST = sys_rst_in
+ PORT LOCKED = dcm_0_lock
+END
+
+# #### DCM for SDRAM Clock Deskew ####
+BEGIN dcm_module
+ PARAMETER INSTANCE = dcm_2
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_CLKIN_PERIOD = 10.000000
+ PARAMETER C_EXT_RESET_HIGH = 0
+ PARAMETER C_CLK0_BUF = TRUE
+ PARAMETER C_CLKFB_BUF = TRUE
+ PARAMETER C_CLKOUT_PHASE_SHIFT = FIXED
+ PARAMETER C_PHASE_SHIFT = 75
+ PORT CLKIN = sys_clk
+ PORT CLK0 = sdram_clk_src
+ PORT CLKFB = sdram_clk_fb
+ PORT RST = dcm_0_lock
+ PORT LOCKED = dcm_locked
+END
+
+# #### DCM for USB Phase Shifted if_clk ####
+BEGIN dcm_module
+ PARAMETER INSTANCE = dcm_usb
+ PARAMETER HW_VER = 1.00.a
+ PARAMETER C_CLKIN_PERIOD = 20.83333333333
+ PARAMETER C_EXT_RESET_HIGH = 1
+ PARAMETER C_CLK0_BUF = TRUE
+ PARAMETER C_CLKFB_BUF = TRUE
+ PARAMETER C_CLKOUT_PHASE_SHIFT = FIXED
+ PARAMETER C_PHASE_SHIFT = -30
+ PARAMETER C_CLKIN_BUF = TRUE
+ PORT CLKIN = usb_if_clk
+ PORT CLK0 = usb_if_clk_shift
+ PORT CLKFB = usb_if_clk_shift
+ PORT RST = usb_dcm_reset
+ PORT LOCKED = usb_dcm_locked
+END
+
+# #### Processor Local Bus (PLB) ####
+BEGIN plb_v34
+ PARAMETER INSTANCE = plb_v34_0
+ PARAMETER HW_VER = 1.02.a
+ PARAMETER C_DCR_INTFCE = 0
+ PARAMETER C_BASEADDR = 0b0000010000
+ PARAMETER C_HIGHADDR = 0b0000011111
+ PORT PLB_Clk = sys_clk
+ PORT SYS_Rst = sys_rst
+END
+
+# #### SDRAM Controller ####
+BEGIN plb_sdram
+ PARAMETER INSTANCE = plb_sdram_0
+ PARAMETER HW_VER = 1.00.e
+ PARAMETER C_PLB_CLK_PERIOD_PS = 10000
+ PARAMETER C_FAMILY = virtex4
+# NOTE: Cacheline support requires significant resources
+ PARAMETER C_INCLUDE_BURST_CACHELN_SUPPORT = 1
+ PARAMETER C_USE_POSEDGE_OUTREGS = 0
+ PARAMETER C_INCLUDE_HIGHSPEED_PIPE = 1
+# WARNING: Timing values are highly dependant on part and clock frequency!
+# tMRD in Micron data sheet (cycles)
+ PARAMETER C_SDRAM_TMRD = 2
+# tWR in Micron data sheet, manual precharge mode (ps)
+ PARAMETER C_SDRAM_TWR = 15000
+# tCCD in Micron data sheet (cycles)
+ PARAMETER C_SDRAM_TCCD = 1
+# tRAS in Micron data sheet (ps)
+ PARAMETER C_SDRAM_TRAS = 48000
+# tRC in Micron data sheet (ps)
+ PARAMETER C_SDRAM_TRC = 72000
+# tRFC in Micron data sheet (ps)
+ PARAMETER C_SDRAM_TRFC = 80000
+# tRCD in Micron data sheet (ps)
+ PARAMETER C_SDRAM_TRCD = 20000
+# tRRD in Micron data sheet (ps)
+ PARAMETER C_SDRAM_TRRD = 16000
+# tRP in Micron data sheet (ps)
+ PARAMETER C_SDRAM_TRP = 19000
+# tREF in Micron data sheet (ms)
+ PARAMETER C_SDRAM_TREF = 64
+# Number of cycles per refresh in Micron data sheet
+ PARAMETER C_SDRAM_REFRESH_NUMROWS = 4096
+# CAS latency can be 2, or 3 depending on target frequency and SDRAM part
+ PARAMETER C_SDRAM_CAS_LAT = 2
+# Data width of SDRAM chip
+ PARAMETER C_SDRAM_DWIDTH = 32
+# Number of address bits on SDRAM
+ PARAMETER C_SDRAM_AWIDTH = 12
+# Log2(number of columns)
+ PARAMETER C_SDRAM_COL_AWIDTH = 9
+# Log2(number of banks)
+ PARAMETER C_SDRAM_BANK_AWIDTH = 2
+ PARAMETER C_BASEADDR = 0x00000000
+ PARAMETER C_HIGHADDR = 0x01ffffff
+ BUS_INTERFACE SPLB = plb_v34_0
+ PORT SDRAM_Clk = sdram_clk
+ PORT SDRAM_CKE = sdram_cke
+ PORT SDRAM_CSn = sdram_cs_n
+ PORT SDRAM_RASn = sdram_ras_n
+ PORT SDRAM_CASn = sdram_cas_n
+ PORT SDRAM_WEn = sdram_we_n
+ PORT SDRAM_DQM = sdram_dqm
+ PORT SDRAM_BankAddr = sdram_ba
+ PORT SDRAM_Addr = sdram_addr
+ PORT SDRAM_DQ = sdram_data
+ PORT SDRAM_Clk_in = sdram_clk_src
+ PORT PLB_Clk = sys_clk
+END
+
+# #### BRAM Memory Interface Controller ####
+BEGIN plb_bram_if_cntlr
+ PARAMETER INSTANCE = plb_bram_if_cntlr_0
+ PARAMETER HW_VER = 1.00.b
+ PARAMETER c_baseaddr = 0xffff0000
+ PARAMETER c_highaddr = 0xffffffff
+# NOTE: Cacheline support requires significant resources
+# PARAMETER C_INCLUDE_BURST_CACHELN_SUPPORT = 1
+ BUS_INTERFACE PORTA = bram_port
+ BUS_INTERFACE SPLB = plb_v34_0
+END
+
+# #### BRAM Memory Block ####
+BEGIN bram_block
+ PARAMETER INSTANCE = bram_block_0
+ PARAMETER HW_VER = 1.00.a
+ BUS_INTERFACE PORTA = bram_port
+END
+
+# #### Camera Frame Grabber with DMA ####
+BEGIN plb_camera
+ PARAMETER INSTANCE = plb_cam0
+ PARAMETER C_IMAGE_WIDTH = 640
+ PARAMETER C_IMAGE_HEIGHT = 480
+ PARAMETER C_BASEADDR = 0xc6400000
+ PARAMETER C_HIGHADDR = 0xc640ffff
+ BUS_INTERFACE MSPLB = plb_v34_0
+ PORT PLB_Clk = sys_clk
+ PORT PLB_Rst = sys_rst
+ PORT cam_pix_clk = cam0_pixclk
+ PORT cam_frame_valid = cam0_frame_valid
+ PORT cam_line_valid = cam0_line_valid
+ PORT cam_data = cam0_data
+ PORT cam_sclk = cam0_sclk
+ PORT cam_sdata = cam0_sdata
+ PORT Interrupt = cam_int
+END
+
+# #### USB Interface ####
+BEGIN plb_usb
+ PARAMETER INSTANCE = plb_usb_0
+ PARAMETER HW_VER = 1.00.d
+ PARAMETER C_USB_DATA_WIDTH = 16
+ PARAMETER C_BASEADDR = 0xcbc00000
+ PARAMETER C_HIGHADDR = 0xcbc0ffff
+ BUS_INTERFACE MSPLB = plb_v34_0
+ PORT PLB_Clk = sys_clk
+ PORT PLB_Rst = sys_rst
+ PORT dcm_locked = usb_dcm_locked
+ PORT dcm_reset = usb_dcm_reset
+ PORT if_clk = usb_if_clk_shift
+ PORT usb_full_n = usb_full_n
+ PORT usb_empty_n = usb_empty_n
+ PORT usb_alive = usb_alive
+ PORT Interrupt = usb_int
+ PORT sloe_n = usb_sloe_n
+ PORT slrd_n = usb_slrd_n
+ PORT slwr_n = usb_slwr_n
+ PORT pktend_n = usb_pktend_n
+ PORT fifoaddr = usb_fifoaddr
+ PORT fd = usb_fd
+END
+
+# #### PLB to OPB Bridge ####
+BEGIN plb2opb_bridge
+ PARAMETER INSTANCE = plb2opb_bridge_0
+ PARAMETER HW_VER = 1.01.a
+ PARAMETER C_NO_PLB_BURST = 1
+ PARAMETER C_DCR_INTFCE = 0
+ PARAMETER C_DCR_BASEADDR = 0b0000000000
+ PARAMETER C_DCR_HIGHADDR = 0b0000000111
+ PARAMETER C_RNG0_BASEADDR = 0x20000000
+ PARAMETER C_RNG0_HIGHADDR = 0x3fffffff
+ PARAMETER C_RNG1_BASEADDR = 0x40000000
+ PARAMETER C_RNG1_HIGHADDR = 0x7fffffff
+ PARAMETER C_NUM_ADDR_RNG = 2
+ BUS_INTERFACE SPLB = plb_v34_0
+ BUS_INTERFACE MOPB = opb_v20_0
+ PORT BGI_Trans_Abort = bgi_trans_abort
+END
+
+# #### On-chip Peripheral Bus (OPB) ####
+BEGIN opb_v20
+ PARAMETER INSTANCE = opb_v20_0
+ PARAMETER HW_VER = 1.10.c
+ PARAMETER C_USE_LUT_OR = 0
+ PORT SYS_Rst = sys_rst
+ PORT OPB_Clk = sys_clk
+ PORT OPB_xferAck = opb_v20_0_OPB_xferAck
+ PORT OPB_retry = opb_v20_0_OPB_retry
+ PORT OPB_errAck = opb_v20_0_OPB_errAck
+ PORT OPB_timeout = opb_v20_0_OPB_timeout
+END
+
+# #### OPB to PLB Bridge for DMA access ####
+BEGIN opb2plb_bridge
+ PARAMETER INSTANCE = opb2plb_bridge_0
+ PARAMETER HW_VER = 1.00.c
+ PARAMETER C_RNG0_BASEADDR = 0x00000000
+ PARAMETER C_RNG0_HIGHADDR = 0x1fffffff
+ PARAMETER C_NUM_ADDR_RNG = 2
+ PARAMETER C_RNG1_BASEADDR = 0xffff0000
+ PARAMETER C_RNG1_HIGHADDR = 0xffffffff
+ PARAMETER C_SAME_CLKS = 1
+ PARAMETER C_IRQ_ACTIVE = 0
+ PARAMETER C_OPB_REG_INTFC = 0
+ BUS_INTERFACE SOPB = opb_v20_0
+ BUS_INTERFACE MPLB = plb_v34_0
+ PORT BGI_Trans_Abort = bgi_trans_abort
+END
+
+# #### UART for Serial Port ####
+BEGIN opb_uartlite
+ PARAMETER INSTANCE = opb_uart_serial
+ PARAMETER HW_VER = 1.00.b
+ PARAMETER C_DATA_BITS = 8
+ PARAMETER C_ODD_PARITY = 0
+ PARAMETER C_USE_PARITY = 0
+ PARAMETER C_CLK_FREQ = 100_000_000
+ PARAMETER C_BAUDRATE = 115_200
+ PARAMETER C_BASEADDR = 0x40620000
+ PARAMETER C_HIGHADDR = 0x4062ffff
+ BUS_INTERFACE SOPB = opb_v20_0
+ PORT OPB_Clk = sys_clk
+ PORT RX = uart_rx
+ PORT TX = uart_tx
+ PORT Interrupt = serial_int
+END
+
+# #### UART for Wireless ####
+BEGIN opb_uartlite
+ PARAMETER INSTANCE = opb_uart_wireless
+ PARAMETER HW_VER = 1.00.b
+ PARAMETER C_BAUDRATE = 57600
+ PARAMETER C_DATA_BITS = 8
+ PARAMETER C_ODD_PARITY = 0
+ PARAMETER C_USE_PARITY = 0
+ PARAMETER C_CLK_FREQ = 100_000_000
+ PARAMETER C_BASEADDR = 0x40600000
+ PARAMETER C_HIGHADDR = 0x4060ffff
+ BUS_INTERFACE SOPB = opb_v20_0
+ PORT OPB_Clk = sys_clk
+ PORT RX = wireless_rx
+ PORT TX = wireless_tx
+ PORT Interrupt = wireless_int
+END
+
+# #### General Purpose I/O for Helios Board ####
+BEGIN opb_gpio
+ PARAMETER INSTANCE = opb_gpio_helios
+ PARAMETER HW_VER = 3.01.b
+ PARAMETER C_GPIO_WIDTH = 8
+ PARAMETER C_IS_BIDIR = 1
+ PARAMETER C_TRI_DEFAULT = 0xFFFFFF87
+ PARAMETER C_DOUT_DEFAULT = 0x00000040
+ PARAMETER C_BASEADDR = 0x40000000
+ PARAMETER C_HIGHADDR = 0x4000ffff
+ BUS_INTERFACE SOPB = opb_v20_0
+ PORT GPIO_IO = wireless_cts_n & flash_rp_n & sram_zz & gpio_helios
+END
+
+# #### PWM Controller for Servo/ESC Control ####
+BEGIN opb_pwm_ctrl
+ PARAMETER INSTANCE = opb_pwm
+ PARAMETER C_PWM_WIDTH = 21
+ PARAMETER C_NUM_PWMS = 2
+ PARAMETER C_BASEADDR = 0x73c00000
+ PARAMETER C_HIGHADDR = 0x73c0ffff
+ BUS_INTERFACE SOPB = opb_v20_0
+ PORT pwm = pwm_servo & pwm_esc
+END
+
+# #### Quadrature Encoder Decoder ####
+BEGIN opb_quad_encoder
+ PARAMETER INSTANCE = opb_encoder
+ PARAMETER C_BASEADDR = 0x7a400000
+ PARAMETER C_HIGHADDR = 0x7a40ffff
+ BUS_INTERFACE SOPB = opb_v20_0
+ PORT enc_a = encoder_a
+ PORT enc_b = encoder_b
+END
+
+# #### Interrupt Controller ####
+BEGIN opb_intc
+ PARAMETER INSTANCE = opb_intc_0
+ PARAMETER HW_VER = 1.00.c
+ PARAMETER C_BASEADDR = 0x41200000
+ PARAMETER C_HIGHADDR = 0x4120ffff
+# Number of Interrupt Inputs Signals:
+ PARAMETER C_NUM_INTR_INPUTS = 1
+ BUS_INTERFACE SOPB = opb_v20_0
+ PORT OPB_Clk = sys_clk
+ PORT Irq = ext_int
+# Interrupt Signals: (rightmost signal has highest priority)
+ PORT Intr = wireless_int & serial_int & usb_int & cam_int
+END
+

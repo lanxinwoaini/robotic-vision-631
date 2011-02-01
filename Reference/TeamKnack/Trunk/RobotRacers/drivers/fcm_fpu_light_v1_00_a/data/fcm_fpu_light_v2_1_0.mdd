@@ -1,0 +1,9 @@
+OPTION psf_version = 2.1.0;
+
+BEGIN driver fcm_fpu_light
+
+    OPTION supported_peripherals = (fcm_fpu_light);
+    OPTION copyfiles = all;
+
+END driver
+

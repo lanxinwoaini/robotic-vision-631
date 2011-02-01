@@ -1,0 +1,11 @@
+run
+-opt_level 2
+-opt_mode speed
+-ifmt mixed
+-ifn C:\Projects\EDK\Helios_1B_Demo_plb_usb\pcores\plb_usb_v1_00_a\devl\synthesis\plb_usb_xst.prj
+-top plb_usb
+-p virtex2p
+-ofn C:\Projects\EDK\Helios_1B_Demo_plb_usb\pcores\plb_usb_v1_00_a\devl\synthesis\plb_usb_xst.ngc
+-iobuf NO
+-rtlview YES
+-hierarchy_separator /

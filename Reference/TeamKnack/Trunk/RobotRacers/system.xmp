@@ -1,0 +1,92 @@
+#Please do not modify this file by hand
+XmpVersion: 8.1.02
+IntStyle: default
+MHS File: system.mhs
+MSS File: system.mss
+NPL File: projnav/system.ise
+Architecture: virtex4
+Device: xc4vfx20
+Package: ff672
+SpeedGrade: -10
+UseProjNav: 0
+AddToNPL: 0
+PNImportBitFile: projnav/system.bit
+PNImportBmmFile: implementation/system_bd.bmm
+UserCmd1: 
+UserCmd1Type: 1
+UserCmd2: 
+UserCmd2Type: 0
+TopInst: system_i
+SynProj: xst
+ReloadPbde: 0
+MainMhsEditor: 0
+InsertNoPads: 0
+WarnForEAArch: 1
+HdlLang: Verilog
+Simulator: mti
+SimModel: BEHAVIORAL
+SimXLib: c:/simlib/EDK8.1.02_mti_se_nt/ISE_Lib/
+SimEdkLib: c:/simlib/EDK8.1.02_mti_se_nt/EDK_Lib/
+MixLangSim: 1
+UcfFile: data/system.ucf
+FpgaImpMode: 0
+Processor: ppc405_0
+BootLoop: 0
+XmdStub: 0
+SwProj: ECEn490
+Processor: ppc405_0
+Executable: executable.elf
+Source: code/bootloader/bootloader.c
+Source: code/bootloader/srec.c
+Source: code/ECEn490/FrameTable.c
+Source: code/ECEn490/HeliosIO.c
+Source: code/ECEn490/Init.c
+Source: code/ECEn490/InterruptHandlers.c
+Source: code/ECEn490/main.c
+Source: code/ECEn490/MemAlloc.c
+Source: code/ECEn490/navigation.c
+Source: code/ECEn490/Packet.c
+Source: code/ECEn490/pidControl.c
+Source: code/ECEn490/Registers.c
+Source: code/ECEn490/RX.c
+Source: code/ECEn490/ServoControl.c
+Source: code/ECEn490/State.c
+Source: code/ECEn490/Timer.c
+Source: code/ECEn490/TX.c
+Source: code/ECEn490/Vision.c
+Source: code/ECEn490/Wireless.c
+Header: code/bootloader/bootloader.h
+Header: code/bootloader/errors.h
+Header: code/bootloader/srec.h
+Header: code/ECEn490/FrameTable.h
+Header: code/ECEn490/HeliosIO.h
+Header: code/ECEn490/Init.h
+Header: code/ECEn490/InterruptControl.h
+Header: code/ECEn490/InterruptHandlers.h
+Header: code/ECEn490/MemAlloc.h
+Header: code/ECEn490/navigation.h
+Header: code/ECEn490/Packet.h
+Header: code/ECEn490/pidControl.h
+Header: code/ECEn490/Registers.h
+Header: code/ECEn490/RX.h
+Header: code/ECEn490/ServoControl.h
+Header: code/ECEn490/State.h
+Header: code/ECEn490/SystemTypes.h
+Header: code/ECEn490/Timer.h
+Header: code/ECEn490/TX.h
+Header: code/ECEn490/Vision.h
+Header: code/ECEn490/Wireless.h
+DefaultInit: EXECUTABLE
+InitBram: 1
+Active: 1
+CompilerOptLevel: 4
+GlobPtrOpt: 0
+DebugSym: 0
+ProfileFlag: 0
+AsmOpt: 
+LinkOpt: --gc-sections
+ProgStart: 
+StackSize: 
+HeapSize: 
+LinkerScript: ECEn490_linker_script.ld
+ProgCCFlags: -Wall -ffunction-sections -fdata-sections

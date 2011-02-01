@@ -1,0 +1,35 @@
+BEGIN opb_quad_encoder
+
+## Peripheral Options
+OPTION IPTYPE = PERIPHERAL
+OPTION IMP_NETLIST = TRUE
+OPTION HDL = VHDL
+
+
+## Bus Interfaces
+BUS_INTERFACE BUS = SOPB, BUS_STD = OPB, BUS_TYPE = SLAVE
+
+## Generics for VHDL or Parameters for Verilog
+PARAMETER C_BASEADDR = 0x80000000, DT = std_logic_vector(0 to 31), BUS = SOPB, ADDRESS = BASE, MIN_SIZE = 0x10
+PARAMETER C_HIGHADDR = 0x800000ff, DT = std_logic_vector(0 to 31), BUS = SOPB, ADDRESS = HIGH
+PARAMETER C_OPB_AWIDTH = 32, DT = INTEGER, BUS = SOPB
+PARAMETER C_OPB_DWIDTH = 32, DT = INTEGER, BUS = SOPB
+
+## Ports
+PORT OPB_Clk = "", DIR = I, BUS = SOPB
+PORT OPB_Rst = OPB_Rst, DIR = I, BUS = SOPB
+PORT OPB_ABus = OPB_ABus, DIR = I, VEC = [0:(C_OPB_AWIDTH-1)], BUS = SOPB
+PORT OPB_BE = OPB_BE, DIR = I, VEC = [0:((C_OPB_DWIDTH/8)-1)], BUS = SOPB
+PORT OPB_DBus = OPB_DBus, DIR = I, VEC = [0:(C_OPB_DWIDTH-1)], BUS = SOPB
+PORT OPB_RNW = OPB_RNW, DIR = I, BUS = SOPB
+PORT OPB_select = OPB_select, DIR = I, BUS = SOPB
+PORT OPB_seqAddr = OPB_seqAddr, DIR = I, BUS = SOPB
+PORT Enc_DBus = Sl_DBus, DIR = O, VEC = [0:(C_OPB_DWIDTH-1)], BUS = SOPB
+PORT Enc_errAck = Sl_errAck, DIR = O, BUS = SOPB
+PORT Enc_retry = Sl_retry, DIR = O, BUS = SOPB
+PORT Enc_toutSup = Sl_toutSup, DIR = O, BUS = SOPB
+PORT Enc_xferAck = Sl_xferAck, DIR = O, BUS = SOPB
+PORT enc_a = "", DIR = I
+PORT enc_b = "", DIR = I
+
+END

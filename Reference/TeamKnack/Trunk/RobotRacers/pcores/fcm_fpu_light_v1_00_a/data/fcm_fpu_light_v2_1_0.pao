@@ -1,0 +1,9 @@
+###############################################################################
+##
+## Peripheral Analyze Order
+##
+###############################################################################
+
+lib fcm_fpu_light_v1_00_a fpu_light_norm
+lib fcm_fpu_light_v1_00_a fpu_light
+lib fcm_fpu_light_v1_00_a fcm_fpu_light

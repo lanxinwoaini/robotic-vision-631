@@ -1,0 +1,13 @@
+OPTION psf_version = 2.1;
+
+BEGIN driver opb_quad_encoder
+
+ OPTION supported_peripherals = (opb_quad_encoder);
+
+ PARAM name = level, desc = "Driver Level", type = int, default = 0, range = (0)
+
+ BEGIN BLOCK, dep = (level = 0)
+  OPTION copyfiles = (opb_quad_encoder.c opb_quad_encoder.h Makefile);
+ END BLOCK
+
+END driver

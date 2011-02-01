@@ -1,0 +1,6 @@
+# Output products list for <frame_fifo_8bit>
+frame_fifo_8bit.ngc
+frame_fifo_8bit.vhd
+frame_fifo_8bit.vho
+frame_fifo_8bit.xco
+frame_fifo_8bit_flist.txt

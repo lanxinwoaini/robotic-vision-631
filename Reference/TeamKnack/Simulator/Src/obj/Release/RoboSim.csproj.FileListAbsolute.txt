@@ -1,0 +1,8 @@
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\bin\Release\RoboSim.exe
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\bin\Release\RoboSim.pdb
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\obj\Release\ResolveAssemblyReference.cache
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\obj\Release\RoboSim.frmMain.resources
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\obj\Release\RoboSim.Properties.Resources.resources
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\obj\Release\RoboSim.csproj.GenerateResource.Cache
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\obj\Release\RoboSim.exe
+C:\Users\Kevin\Documents\School\The Knack\CODE\RoboSim\Src\obj\Release\RoboSim.pdb

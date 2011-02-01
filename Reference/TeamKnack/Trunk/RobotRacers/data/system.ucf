@@ -1,0 +1,360 @@
+CONFIG STEPPING = "ES";
+
+////////////////////////////////////////////////////////////////////////////
+// Clock and Reset Signals
+////////////////////////////////////////////////////////////////////////////
+
+NET sys_clk_in LOC = A12 | IOSTANDARD = LVCMOS33;
+NET sys_clk_in TNM_NET = sys_clk_in;
+TIMESPEC TS_sys_clk_in = PERIOD sys_clk_in 10 ns HIGH 50%;
+
+NET sys_rst_in LOC = AE13 | PULLUP | TIG;
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// UART Signals
+////////////////////////////////////////////////////////////////////////////
+
+NET uart_rx LOC = J14 | TIG;
+NET uart_tx LOC = J15 | SLEW = SLOW | TIG;
+NET uart_*  IOSTANDARD = LVCMOS33;
+
+///////////////////////////////////////////////////////////////////////////////
+// Wireless Transceiver Signals
+///////////////////////////////////////////////////////////////////////////////
+
+NET wireless_rx LOC    = K6 | TIG;
+NET wireless_tx LOC    = H3 | SLEW = SLOW | TIG;
+NET wireless_cts_n LOC = J4 | TIG;
+
+NET wireless_* IOSTANDARD = LVCMOS33;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Buttons, Switches, and LEDs
+///////////////////////////////////////////////////////////////////////////////
+
+NET gpio_helios<4>  LOC = K13;  # LED 2 (MSB)
+NET gpio_helios<4>  IOSTANDARD = LVCMOS33 | SLEW = SLOW | DRIVE = 4;
+
+NET gpio_helios<3>  LOC = J13;  # LED 1
+NET gpio_helios<3>  IOSTANDARD = LVCMOS33 | SLEW = SLOW | DRIVE = 4;
+
+NET gpio_helios<2>  LOC = V13;  # Switch 2
+NET gpio_helios<2>  IOSTANDARD = LVCMOS25;
+
+NET gpio_helios<1>  LOC = W13;  # Switch 1
+NET gpio_helios<1>  IOSTANDARD = LVCMOS25;
+
+NET gpio_helios<0>  LOC = AD14; # Button (LSB)
+NET gpio_helios<0>  IOSTANDARD = LVCMOS25;
+
+NET gpio_helios<*> TIG;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// SRAM Signals
+///////////////////////////////////////////////////////////////////////////////
+NET sram_zz IOSTANDARD = LVDCI_25;
+NET sram_zz SLEW = SLOW;
+NET sram_zz DRIVE = 8;
+NET sram_zz TIG;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// USB Signals
+///////////////////////////////////////////////////////////////////////////////
+
+NET usb_if_clk LOC = D15;
+NET usb_if_clk IOSTANDARD = LVCMOS33;
+NET usb_if_clk PERIOD = 20.833333 ns;
+
+NET usb_full_n LOC = C23;
+NET usb_full_n IOSTANDARD = LVCMOS33;
+
+NET usb_empty_n LOC = D23;
+NET usb_empty_n IOSTANDARD = LVCMOS33;
+
+NET usb_alive LOC = C24;
+NET usb_alive IOSTANDARD = LVCMOS33;
+NET usb_alive PULLDOWN;
+
+NET usb_sloe_n LOC = L18;
+NET usb_sloe_n IOSTANDARD = LVCMOS33;
+
+NET usb_slrd_n LOC = N23;
+NET usb_slrd_n IOSTANDARD = LVCMOS33;
+
+NET usb_slwr_n LOC = N24;
+NET usb_slwr_n IOSTANDARD = LVCMOS33;
+
+NET usb_pktend_n LOC = D24;
+NET usb_pktend_n IOSTANDARD = LVCMOS33;
+
+NET usb_fifoaddr<0> LOC = E23;
+NET usb_fifoaddr<1> LOC = F23;
+NET usb_fifoaddr<*> IOSTANDARD = LVCMOS33;
+
+NET usb_fd<0> LOC = N22;
+NET usb_fd<1> LOC = M24;
+NET usb_fd<2> LOC = L24;
+NET usb_fd<3> LOC = M22;
+NET usb_fd<4> LOC = L19;
+NET usb_fd<5> LOC = L23;
+NET usb_fd<6> LOC = K23;
+NET usb_fd<7> LOC = J23;
+NET usb_fd<8> LOC = K20;
+NET usb_fd<9> LOC = J19;
+NET usb_fd<10> LOC = J21;
+NET usb_fd<11> LOC = G24;
+NET usb_fd<12> LOC = F24;
+NET usb_fd<13> LOC = K22;
+NET usb_fd<14> LOC = H24;
+NET usb_fd<15> LOC = K21;
+NET usb_fd<*> IOSTANDARD = LVCMOS33;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Flash Signals
+///////////////////////////////////////////////////////////////////////////////
+
+NET flash_rp_n   IOSTANDARD = LVCMOS33;
+NET flash_rp_n   SLEW = SLOW;
+NET flash_rp_n   DRIVE = 8;
+NET flash_rp_n   TIG;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// SDRAM Signals
+///////////////////////////////////////////////////////////////////////////////
+
+# NET sdram_addr<12> LOC = L3;
+NET sdram_addr<11> LOC = AD11;
+NET sdram_addr<10> LOC = AD6;
+NET sdram_addr<9>  LOC = N4;
+NET sdram_addr<8>  LOC = P3;
+NET sdram_addr<7>  LOC = U4;
+NET sdram_addr<6>  LOC = Y3;
+NET sdram_addr<5>  LOC = W3;
+NET sdram_addr<4>  LOC = W5;
+NET sdram_addr<3>  LOC = Y7;
+NET sdram_addr<2>  LOC = AB4;
+NET sdram_addr<1>  LOC = AC8;
+NET sdram_addr<0>  LOC = AB6;
+
+NET sdram_data<31> LOC = P4;
+NET sdram_data<30> LOC = R5;
+NET sdram_data<29> LOC = U6;
+NET sdram_data<28> LOC = U5;
+NET sdram_data<27> LOC = V4;
+NET sdram_data<26> LOC = T8;
+NET sdram_data<25> LOC = T9;
+NET sdram_data<24> LOC = AA3;
+NET sdram_data<23> LOC = AC6;
+NET sdram_data<22> LOC = AB7;
+NET sdram_data<21> LOC = AA8;
+NET sdram_data<20> LOC = AD8;
+NET sdram_data<19> LOC = AD9;
+NET sdram_data<18> LOC = AB9;
+NET sdram_data<17> LOC = Y10;
+NET sdram_data<16> LOC = AC11;
+NET sdram_data<15> LOC = P5;
+NET sdram_data<14> LOC = R3;
+NET sdram_data<13> LOC = T4;
+NET sdram_data<12> LOC = U7;
+NET sdram_data<11> LOC = V6;
+NET sdram_data<10> LOC = W4;
+NET sdram_data<9>  LOC = U9;
+NET sdram_data<8>  LOC = Y6;
+NET sdram_data<7>  LOC = AB11;
+NET sdram_data<6>  LOC = AA10;
+NET sdram_data<5>  LOC = AC9;
+NET sdram_data<4>  LOC = AC7;
+NET sdram_data<3>  LOC = Y8;
+NET sdram_data<2>  LOC = AA7;
+NET sdram_data<1>  LOC = AD4;
+NET sdram_data<0>  LOC = AB5;
+
+NET sdram_clk    LOC = AC4;
+NET sdram_clk_fb LOC = AB12;
+NET sdram_cke    LOC = AA4;
+
+NET sdram_cs_n  LOC = W10;
+NET sdram_we_n  LOC = AC3;
+
+NET sdram_ras_n LOC = AA5;
+NET sdram_cas_n LOC = AD3;
+
+NET SDRAM_ba<1> LOC = AD10;
+NET SDRAM_ba<0> LOC = AA9;
+
+NET sdram_dqm<3> LOC = Y5;
+NET sdram_dqm<2> LOC = AD5;
+NET sdram_dqm<1> LOC = L4;
+NET sdram_dqm<0> LOC = AB10;
+
+
+NET sdram_addr<*> IOSTANDARD = LVDCI_25;
+NET sdram_addr<*> SLEW = FAST;
+
+NET sdram_data<*> IOSTANDARD = LVDCI_25;
+NET sdram_data<*> SLEW = FAST;
+
+NET sdram_clk IOSTANDARD = LVCMOS25;
+NET sdram_clk DRIVE = 16;
+NET sdram_clk SLEW = FAST;
+
+NET sdram_clk_fb IOSTANDARD = LVCMOS25;
+NET sdram_clk_fb PERIOD = 10 ns;
+
+NET sdram_cke IOSTANDARD = LVDCI_25;
+NET sdram_cke SLEW = FAST;
+
+NET sdram_cs_n IOSTANDARD = LVDCI_25;
+NET sdram_cs_n SLEW = FAST;
+
+NET sdram_we_n IOSTANDARD = LVDCI_25;
+NET sdram_we_n SLEW = FAST;
+
+NET sdram_ras_n IOSTANDARD = LVDCI_25;
+NET sdram_ras_n SLEW = FAST;
+
+NET sdram_cas_n IOSTANDARD = LVDCI_25;
+NET sdram_cas_n SLEW = FAST;
+
+NET sdram_ba<*> IOSTANDARD = LVDCI_25;
+NET sdram_ba<*> SLEW = FAST;
+
+NET sdram_dqm<*> IOSTANDARD = LVDCI_25;
+NET sdram_dqm<*> SLEW = FAST;
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Compass SPI Signals
+///////////////////////////////////////////////////////////////////////////////
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// RC Servo and ESC PWM Signals
+///////////////////////////////////////////////////////////////////////////////
+
+NET pwm_servo LOC = G10;  # SERVO_1
+NET pwm_esc   LOC = A9;   # SERVO_2
+
+NET pwm_* IOSTANDARD = LVTTL;
+NET pwm_* SLEW = SLOW;
+NET pwm_* TIG;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Encoder Signals
+///////////////////////////////////////////////////////////////////////////////
+
+NET encoder_a LOC = B11;
+NET encoder_b LOC = C11;
+
+NET encoder_* IOSTANDARD = LVTTL;
+NET encoder_* TIG;
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Camera Signals Cam0
+///////////////////////////////////////////////////////////////////////////////
+
+NET cam0_data<0>     LOC = C8;
+NET cam0_data<1>     LOC = A8;
+NET cam0_data<2>     LOC = D9;
+NET cam0_data<3>     LOC = C6;
+NET cam0_data<4>     LOC = C9;
+NET cam0_data<5>     LOC = B9;
+NET cam0_data<6>     LOC = E10;
+NET cam0_data<7>     LOC = C7;
+
+NET cam0_frame_valid LOC = D8;
+NET cam0_line_valid  LOC = A7;
+NET cam0_pixclk      LOC = F8;
+
+NET cam0_sclk        LOC = E7;
+NET cam0_sdata       LOC = E8;
+NET cam0_sdata PULLUP;
+
+NET cam_reset_n      LOC = D10;
+NET cam_reset_n TIG;
+NET cam_standby      LOC = G9;
+NET cam_standby TIG;
+
+NET cam* IOSTANDARD = LVCMOS33;
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Camera Signals CAM1
+///////////////////////////////////////////////////////////////////////////////
+
+#NET cam0_data<0>     LOC = L7;
+#NET cam0_data<1>     LOC = K3;
+#NET cam0_data<2>     LOC = L5;
+#NET cam0_data<3>     LOC = K8;
+#NET cam0_data<4>     LOC = K7;
+#NET cam0_data<5>     LOC = H9;
+#NET cam0_data<6>     LOC = J5;
+#NET cam0_data<7>     LOC = H4;
+
+#NET cam0_frame_valid LOC = J3;
+#NET cam0_line_valid  LOC = L9;
+#NET cam0_pixclk      LOC = M5;
+
+#NET cam0_sclk        LOC = J9;
+#NET cam0_sdata       LOC = M6;
+#NET cam0_sdata 		PULLUP;
+
+#NET cam_reset_n      LOC = D10;
+#NET cam_reset_n 		TIG;
+#NET cam_standby      LOC = G9; 
+#NET cam_standby 		TIG;
+
+#NET cam* 				IOSTANDARD = LVCMOS33;
+
+
+////////////////////////////////////////////////////////////////////////////
+// Miscellaneous Constraints
+////////////////////////////////////////////////////////////////////////////
+
+# Ignore timing on interrupt signals
+NET wireless_int      TIG;
+NET ext_int           TIG;
+
+# Ignore timing on reset signals
+NET sys_rst           TIG;
+NET opb_v20_0_OPB_Rst TIG;
+NET plb_v34_0_PLB_Rst TIG;
+
+# Ignore timing on final DCM locked signals
+NET dcm_0_lock        TIG;
+#NET dcm_1_lock        TIG;
+NET dcm_locked        TIG;
+
+# Define reset group, ignore timing on this group
+NET "resetsys"     TPTHRU = "RST_GRP";
+NET "resetchip"    TPTHRU = "RST_GRP";
+NET "resetcore"    TPTHRU = "RST_GRP";
+NET "resetsysreq"  TPTHRU = "RST_GRP";
+NET "resetchipreq" TPTHRU = "RST_GRP";
+NET "resetcorereq" TPTHRU = "RST_GRP";
+TIMESPEC "TS_RST" = FROM CPUS THRU RST_GRP TO FFS TIG;
+
+# Ignore timing constraints from PPC to OPB2PLB bridge
+INST "opb2plb_bridge_0" TNM = "opb2plb_bridge";
+TIMESPEC "TS_PPC_TO_OPB2PLB" = FROM CPUS to "opb2plb_bridge" TIG;
+
