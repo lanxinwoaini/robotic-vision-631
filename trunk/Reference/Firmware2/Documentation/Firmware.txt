@@ -1,0 +1,64 @@
+Here are my thoughts about firmware for the game controller.
+
+The system is interrupt driven.
+
+Interrupts, and interrupt responses:
+
+1. Internal UART interrupt.  You have received input on the console.  Response is to read as many characters as are available in the fifo.  When an entire line is buffered (ending  in \n) , call a procedure to process the command string (monitor command).
+
+2. External dual UART interrupt.  You have received data from either the photodiode receiver, or from the Xbee wireless modem.  Response is to poll both fifos.  Message from the photodiode receiver is passes as a parameter to the procedure the processes shots received by the unit.  The usual response is to broadcast that you (robot #n) were hit by a shot by robot #m of type {kill, pass, revive}.  A message received from the Xbee modem is passed to the procedure to update game state.
+
+3. External robot interrupt.  Read the command port from the robot controller (usually request to shoot), perform the action, and post status.  The handshake between robot and game controller needs to be defined.  We have 8 wires + interrupt to pass command/status.
+
+4. Timer interrupt.  Call whatever callback procedure is registered with the interrupt.
+
+Think about the priorities of the interrupts, and if we want high priority interrupts interrupting low priority interrupt service routines.
+
+Monitor
+
+The monitor is always running, and is used for:
+1. Testing
+2. Debugging
+3. Configuration/Initialization
+
+Monitor port is 9600 baud.  Attach host to it with USB to serial cable.  Host side is a hyperterm type of program.
+
+Configuration Parameters (stored in eeprom)
+	volume (value)
+	s08[16] truck_name (string) 16 chars long
+	u08[4] team_color (Team_number,R_value, B_value, G_value)
+	u08[4] flag_color (status_number,R_value, B_value, G_value)
+		( other colors as needed )
+	[game parameters and game options]
+	u16 millisecondsToHitOrMiss
+	u16 cooldownTimer
+	u08 rules
+Parameters (not stored in eeprom)
+	team_id (value)
+	player_id (value)
+	eeprom (write_enabled, write_disabled)
+		[only stored in sound chip, not eeprom]
+	version (string)  [read_only, hard coded in monitor]
+	debug_messages ( on | off )
+
+Commands
+	(* = default arguments.  If argument is omitted, this one is used)
+	set [ <parameter> <value> | *defaults ]
+		set given parameter to given value,
+		or set all parameters to their default values
+	display [ <parameter> | *all ]
+		display the value of a given parameter, or all parameters
+	reset [ uart | led | sound | xbee | *all ]
+		reset different peripherals
+	out [ laser | xbee ] <value>
+		send out messages
+		could also be made to send out periodic messages
+		for testing photo diodes, etc.
+	play [ <index> | <tone> <freq> <time> ]
+		play a sound, either a clip (index) or a tone
+	eeprom [ enable | disable | upload <hex_file> | check <hex_file> ]
+		turn write enable on or off
+		upload code into eeprom, or check eeprom contents
+	game [ start | stop | pause | reset | init]
+		begin the game play, pause game, stop and reset game 
+		init game--pings all players and requests truck names, then waits to set up teams, sends team data, rule set, timercounts

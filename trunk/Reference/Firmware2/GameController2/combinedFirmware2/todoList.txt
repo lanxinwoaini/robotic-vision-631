@@ -1,0 +1,37 @@
+TODO list:					Assigned to:		Complete
+
+DualUart					Jared				
+	Driver										almost
+	Xbee init/reset								no
+	laser inti?									no?
+	testFunctionality							no
+
+SPI interface				Russ				no				
+	test										no
+	update functions with u08 slave				no
+	integrate into project						yes
+	
+UART interface				Russ				yes
+	console										yes
+	test										yes
+	
+KX1400(soundchip)			Russ				no
+	write driver								yes
+	write tests									no
+
+Audio file parser			Russ				Yes
+	takes as input 4-bitipm adpcm audio files to format and creates a file which the kx1400 can read
+kx1400 ide available at the keterex site does this	
+	
+EEPROM						Russ				no
+	write driver								yes
+	write test									no
+
+PWM							Jared
+	driver
+	test functions
+
+Console
+Global Parameters
+
+Integration with high level code
