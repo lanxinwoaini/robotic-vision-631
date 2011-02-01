@@ -1,0 +1,26 @@
+How to use the KX1400 software
+
+look at example code, basically it uses a script file to generate the output intel hex formatted audio file to put onto eeprom.
+Example
+
+sequence Sound1()
+	unmute;
+	playADPCM("Synth_Loop.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	mute;
+	stop;
+end
+
+
+playlist
+	addrwidth=16;
+	Sound1;
+	
+end
+
+all .wav files need to be RIFF format and be 16-bit 8Khz wav files.  If they are not in this format use audacity to convert them.
+
+you then need to compile this outside the editor because it will not create the correct file for a 16-bit addressable memory.
+
+the command is c:\\mlp.exe -a16 -x "fileName.kml" "fileName.hex"
+This outputs an Intel Hex formatted file.  You then need to download a converter and convert it into binary.  It is now ready to be transfered
+to the sound chip!

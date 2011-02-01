@@ -1,0 +1,73 @@
+//-------------------------------------------------------------------------------------------------------------------------------------
+// example1.kml
+//
+// Keterex KML script-file that builds a collection of audio phrases created from sampled audio, MIDI (Musical 
+// Instrument Digital Interface) files, and the algorithmic sound effects.
+//
+// Sequences (audio phrases):
+// 1) LibertyBellMarch 	- Tone generator commands created by converting a MIDI file
+// 2) WeirdAlarm		- 8 kHz sampled audio (from .WAV file) and strored as 12-bit PCM
+// 3) SynthLoop		- 8 kHz sampled audio (from .WAV file) and strored as 12-bit PCM
+// 4) Humoresque		- A short song played using the notes included from "notes.inc"
+// 5) Phazor			- Algorithmic sound effect
+// 6) PullUp			- Algorithmic sound effect
+// 7) GameOver		- Algorithmic sound effect
+// 8) Blip			- Algorithmic sound effect
+//-------------------------------------------------------------------------------------------------------------------------------------
+
+
+sequence Victory_Phrase()
+	unmute;
+	playADPCM("Power Up.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	stop;
+end
+
+sequence Disabled_Phrase()
+	unmute;
+	playADPCM("Cutter.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	mute;
+	stop;
+end
+sequence Revived_Phrase()
+	unmute;
+	playADPCM("Power Up.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	mute;
+	stop;
+end
+sequence Got_Flag_Phrase()
+	unmute;
+	playADPCM("RedAlert.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	playADPCM("RedAlert.wav");
+	playADPCM("RedAlert.wav");
+	mute;
+	stop;
+end
+sequence Fire_Shot_Phrase()
+	unmute;
+	playADPCM("Phasor.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	mute;
+	stop;
+end
+sequence Pass_Shot_Phrase()
+	unmute;
+	playADPCM("Cool.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	mute;
+	stop;
+end
+sequence Revive_Shot_Phrase()
+	unmute;
+	playADPCM("ReviveShot.wav");		// Import and convert a .WAV file to 4-bit ADPCM samples.
+	mute;
+	stop;
+end
+
+playlist
+	addrwidth=16;
+	Victory_Phrase;
+	Disabled_Phrase;
+	Revived_Phrase;
+	Got_Flag_Phrase;
+	Fire_Shot_Phrase;
+	Pass_Shot_Phrase;
+	Revive_Shot_Phrase;
+end

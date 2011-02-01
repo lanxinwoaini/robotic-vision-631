@@ -1,0 +1,19 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="8">
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1" startPos="0" endPos="0" selMode="0" lang="C" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\spi.c" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1" startPos="0" endPos="0" selMode="0" lang="C++" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\spi.h" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1" startPos="0" endPos="0" selMode="0" lang="C" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\timer.c" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="936" startPos="3577" endPos="3577" selMode="0" lang="C++" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\timer.h" />
+            <File firstVisibleLine="228" xOffset="0" scrollWidth="664" startPos="6258" endPos="6258" selMode="0" lang="C" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\uart.c" />
+            <File firstVisibleLine="154" xOffset="0" scrollWidth="632" startPos="4411" endPos="4411" selMode="0" lang="C++" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\uart.h" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="632" startPos="0" endPos="0" selMode="0" lang="C" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\buffer.c" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="664" startPos="0" endPos="0" selMode="0" lang="C++" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\buffer.h" />
+            <File firstVisibleLine="190" xOffset="0" scrollWidth="1784" startPos="4266" endPos="4266" selMode="0" lang="C" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\GameController.c" />
+            <File firstVisibleLine="13" xOffset="0" scrollWidth="632" startPos="1473" endPos="1473" selMode="0" lang="C++" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\global.h" />
+            <File firstVisibleLine="59" xOffset="0" scrollWidth="800" startPos="3761" endPos="3761" selMode="0" lang="C++" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\avrlib\rprintf.h" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="688" startPos="1227" endPos="1227" selMode="0" lang="C" filename="C:\Documents and Settings\Russell\My Documents\School\RobotRacers\LaserModuleFirmware\GameController\avrlib\rprintf.c" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>

@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<HAPSIM>
+   <General>
+      <Build>1930</Build>
+      <Position>
+         <top>181</top>
+         <bottom>801</bottom>
+         <left>685</left>
+         <right>1224</right>
+      </Position>
+      <StayOnTop>1</StayOnTop>
+      <Target>ATmega168</Target>
+   </General>
+   <Views>
+      <LEDs>
+         <Name>LEDs1</Name>
+         <Position>
+            <top>423</top>
+            <left>342</left>
+         </Position>
+         <Config index="0">
+            <Color>Blue</Color>
+            <Name>LED0</Name>
+            <PortPin>
+               <Port>PORTD</Port>
+               <Bit>4</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="1">
+            <Color>Red</Color>
+            <Name>LED1</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>1</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="2">
+            <Color>Red</Color>
+            <Name>LED2</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>2</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="3">
+            <Color>Red</Color>
+            <Name>LED3</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>3</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="4">
+            <Color>Red</Color>
+            <Name>LED4</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>4</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="5">
+            <Color>Red</Color>
+            <Name>LED5</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>5</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="6">
+            <Color>Red</Color>
+            <Name>LED6</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>6</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+         <Config index="7">
+            <Color>Red</Color>
+            <Name>LED7</Name>
+            <PortPin>
+               <Port>PORTB</Port>
+               <Bit>7</Bit>
+            </PortPin>
+            <Invert>0</Invert>
+         </Config>
+      </LEDs>
+      <Terminal>
+         <Name></Name>
+         <Position>
+            <top>4294967266</top>
+            <left>4294967292</left>
+            <width>539</width>
+            <height>428</height>
+         </Position>
+         <Interface>USART0</Interface>
+         <localEcho>0</localEcho>
+         <redirectEnable>0</redirectEnable>
+         <Redirection>
+            <Port>COM3</Port>
+            <Baudrate>1200</Baudrate>
+            <Parity>None</Parity>
+            <Stopbits>1</Stopbits>
+            <Flowcontrol>None</Flowcontrol>
+         </Redirection>
+      </Terminal>
+   </Views>
+</HAPSIM>
