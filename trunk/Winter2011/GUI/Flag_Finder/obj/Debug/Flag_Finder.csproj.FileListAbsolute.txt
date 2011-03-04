@@ -1,0 +1,10 @@
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Robot_Racers.RegisterViewer.resources
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Robot_Racers.RobotRacer.resources
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Flag_Finder.csproj.GenerateResource.Cache
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\bin\Debug\Flag_Finder.exe
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\bin\Debug\Flag_Finder.pdb
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Flag_Finder.Properties.Resources.resources
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Flag_Finder.exe
+C:\Documents and Settings\Cory\My Documents\School\BYU\Winter 2011\631\TeamProjects\Winter2011\GUI\Robot_Racers\obj\Debug\Flag_Finder.pdb
