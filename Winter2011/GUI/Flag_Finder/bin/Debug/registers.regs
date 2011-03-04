@@ -1,0 +1,14 @@
+25,FramesPerSecond
+24,Actual PIT Frequency
+1,Encoder Value
+107,Desired Velocity
+3,Desired Angle
+2,Num Milliseconds to Run
+108,Num Meters to Run
+4,Desired Encoder
+5,PID Distance Mode
+25,FramesPerSecond
+101,K_P Float
+108,Num Meters to Run
+28,Hardware FramesPerSecond
+25,Software FramesPerSecond
