@@ -13,13 +13,16 @@
 #define new DEBUG_NEW
 #endif
 
-unsigned __stdcall getSign(void *ArgList);
+//unsigned __stdcall getSign(void *ArgList);
+char getSign();
+int numWhitePixels(Mat img);
 
 VideoCapture myCamera(-1);
 Mat frame[2];
 Mat templates[10];
 Mat lastFrame;
-Mat handFrame;
+Mat handFrame, handFrame_thresh;
+Mat diffBig, diffSmall;
 CString myPassword;
 bool doAcquisition = false;
 bool haveImage = false;
@@ -28,7 +31,8 @@ bool signing = false;
 bool debug = true;
 bool processing = false;
 HANDLE signThread=0;
-Rect handRegion = Rect(150, 100, 175, 175);
+Rect handRegion = Rect(50, 50, 160, 160);
+Mat display;
 
 int threshMin = 160;
 
@@ -86,10 +90,10 @@ BEGIN_MESSAGE_MAP(CFinalProjectDlg, CDialog)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_TIMER()
 	//}}AFX_MSG_MAP
-	ON_BN_CLICKED(IDC_BTN_SETPASSWORD, &CFinalProjectDlg::OnBnClickedBtnSetPassword)
 	ON_BN_CLICKED(IDC_SAVEIMG, &CFinalProjectDlg::OnBnClickedSaveimg)
 	ON_BN_CLICKED(IDC_STARTENTRY, &CFinalProjectDlg::OnBnClickedStartentry)
 	ON_BN_CLICKED(IDC_BTN_SAVETEMPLATE, &CFinalProjectDlg::OnBnClickedBtnSavetemplate)
+	ON_NOTIFY(NM_CUSTOMDRAW, IDC_THRESHOLDSLIDER, &CFinalProjectDlg::OnNMCustomdrawThresholdslider)
 END_MESSAGE_MAP()
 
 
@@ -122,6 +126,11 @@ BOOL CFinalProjectDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	CSliderCtrl *c = (CSliderCtrl *)GetDlgItem(IDC_THRESHOLDSLIDER);
+	c->SetRange(0, 255);
+	c->SetTicFreq(10);
+	c->SetPos(threshMin);
+
 	// TODO: Add extra initialization here
 	//init the image, 801-2401699
 	WINDOWPLACEMENT lpwndpl;
@@ -146,7 +155,7 @@ BOOL CFinalProjectDlg::OnInitDialog()
     //
     // Set a default window size.
     // 
-    pheader->biWidth    = 640;
+	pheader->biWidth    = 640+handRegion.width;
     pheader->biHeight   = -480;
     pheader->biBitCount = 24;
    
@@ -169,6 +178,8 @@ BOOL CFinalProjectDlg::OnInitDialog()
     SetTimer( ID_TIMER_CAPTURE, 30, 0 );
 	//cameraThread = (HANDLE)_beginthreadex( NULL, 0, &captureFrames, NULL, 0, &cameraThreadID );
 	doAcquisition = true;
+
+	display.create(480, 640+handRegion.width, CV_8UC3);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -211,15 +222,50 @@ void CFinalProjectDlg::OnPaint()
 	}
 	else
 	{
-		if(doAcquisition && haveImage)
+		if(doAcquisition && haveImage){
+						
+			for(int i = 0; i < frame[0].rows; i++)
+				for(int j = 0; j < frame[0].cols; j++)
+					display.at<Point3_<uchar>>(i, j) = frame[0].at<Point3_<uchar>>(i,j);
+
+			
+			
+			int col_off = frame[0].cols;
+			int row_off = handFrame.rows;
+			for(int i = 0; i < handFrame.rows; i++){
+				for(int j = col_off; j < handFrame.cols+col_off; j++){
+					int val = handFrame.at<uchar>(i,j-col_off);
+					display.at<Point3_<uchar>>(i, j) = Point3_<uchar>(val, val, val);
+					val = handFrame_thresh.at<uchar>(i,j-col_off);
+					display.at<Point3_<uchar>>(i+row_off, j) = Point3_<uchar>(val, val, val);
+					if(diffSmall.data)
+						val = diffSmall.at<uchar>(i, j-col_off);
+					display.at<Point3_<uchar>>(i+2*row_off, j) = Point3_<uchar>(val, val, val);
+				}
+			}
+
+			rectangle(display, Point(frame[0].cols,-1), Point(display.cols+1,display.rows),Scalar(100, 200, 50), 2);
+			rectangle(display, Point(frame[0].cols,handRegion.height), Point(display.cols+1,2*handRegion.height),Scalar(100, 200, 50), 2);
+			
+			Point handFrameTop(frame[0].cols, 0);
+			Point threshTop(frame[0].cols, handRegion.height);
+			Point diffTop(frame[0].cols, 2*handRegion.height);
+			putText(display, "Hand Frame", Point(handFrameTop.x+5, handFrameTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+			putText(display, "Threshold", Point(threshTop.x+5, threshTop.y+13), CV_FONT_HERSHEY_PLAIN, .8, Scalar(0,128,0), 2);
+			putText(display, "Hand Frame", Point(threshTop.x+5, threshTop.y+30), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+			if(diffSmall.data)
+				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+			
+
 			::SetDIBitsToDevice(
 			ImageDC->GetSafeHdc(), 0, 0,
 			m_bitmapInfo.bmiHeader.biWidth, 
 			::abs(m_bitmapInfo.bmiHeader.biHeight),
 			0, 0, 0, 
 			::abs(m_bitmapInfo.bmiHeader.biHeight),
-			frame[0].data, 
+			display.data, 
 			&m_bitmapInfo, DIB_RGB_COLORS);
+		}
 		CDialog::OnPaint();
 	}
 }
@@ -240,34 +286,35 @@ void CFinalProjectDlg::OnTimer( UINT nIDEvent )
 		
 		myCamera >> frame[0];
 		cvtColor(frame[0], frame[1], CV_RGB2GRAY);
+
+		if(lastFrame.data){
+			absdiff(lastFrame, frame[1], diffBig);
+			stringstream s;
+			s <<  numWhitePixels(diffBig);
+			resize(diffBig, diffSmall, Size(handRegion.width, handRegion.height));
+			putText(diffSmall, s.str(), Point(diffSmall.cols-40,10), CV_FONT_HERSHEY_PLAIN, .6, Scalar(128, 128, 128));
+		}
+
 		Size imgSize = frame[0].size();
 		int dtop = handRegion.y;
 		int dbottom = imgSize.height - (dtop+handRegion.height);
 		int dleft = handRegion.x;
 		int dright = imgSize.width - (dleft+handRegion.width);
+
+
 		frame[1].adjustROI(-dtop, -dbottom, -dleft, -dright);
 		frame[1].copyTo(handFrame);
 		frame[1].adjustROI(dtop, dbottom, dleft, dright);
-		threshold(handFrame, handFrame, threshMin, 255, CV_THRESH_BINARY);
-		imshow("HAND", handFrame);
-//		Mat diff;
-//		absdiff(lastFrame, frame[1], diff);
-		
+		threshold(handFrame, handFrame_thresh, threshMin, 255, CV_THRESH_BINARY);		
 
 		rectangle(frame[0], handRegion.tl(), handRegion.br(), Scalar(128, 255,0));
 		Mat img = cv::imread("Templates\\1.jpg", CV_LOAD_IMAGE_GRAYSCALE);
 		threshold(img, templates[1], threshMin, 255, CV_THRESH_BINARY);
 		imshow("template 1", templates[1]);
-		
+		frame[1].copyTo(lastFrame);
 		haveImage = true;
 		this->InvalidateRect(DispRect, FALSE); // Initiate redrawing of Images for display
     }
-}
-
-
-void CFinalProjectDlg::OnBnClickedBtnSetPassword()
-{
-	this->GetDlgItemText(IDC_PASSWORDTEXT, myPassword);
 }
 
 void CFinalProjectDlg::OnBnClickedSaveimg()
@@ -281,10 +328,25 @@ void CFinalProjectDlg::OnBnClickedSaveimg()
 
 void CFinalProjectDlg::OnBnClickedStartentry()
 {
-	signing = !signing;
+	this->GetDlgItemText(IDC_PASSWORDTEXT, myPassword);
+	if(signing){
+		CString s("Start Signing");		//Stop Signing was just clicked
+		SetDlgItemText(IDC_STARTENTRY, s);
+		signing = !signing;
+	}
+	else if(myPassword.GetLength() != 0){
+		CString s("Stop Signing");		//Start Signing was just clicked
+		SetDlgItemText(IDC_STARTENTRY, s);
+		signing = !signing;
+	}
+	else{
+		CString s("Please enter a password before signing.");
+		AfxMessageBox(s);
+	}
 }
 Mat result, resultT;
-unsigned __stdcall getSign(void *ArgList)
+//unsigned __stdcall getSign(void *ArgList)
+char getSign()
 {
 	double minVal=0, maxVal=0;
 	Point minLoc, maxLoc;
@@ -311,4 +373,30 @@ void CFinalProjectDlg::OnBnClickedBtnSavetemplate()
 	CT2CA pszConvertedAnsiString (fileString);
 	std::string nonCString (pszConvertedAnsiString);
 	imwrite("Templates\\"+nonCString, handFrame);
+}
+
+void CFinalProjectDlg::OnNMCustomdrawThresholdslider(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
+	CSliderCtrl *c = (CSliderCtrl*)GetDlgItem(IDC_THRESHOLDSLIDER);
+	threshMin = c->GetPos();
+	CWnd *t = GetDlgItem(IDC_THRESHDISPLAY);
+	stringstream s;
+	s << threshMin;
+	CString num(s.str().c_str());
+	t->SetWindowText((LPCTSTR)num);
+	*pResult = 0;
+}
+
+//counts the number of all non-black pixels
+int numWhitePixels(Mat img)
+{
+	int cnt = 0;
+	//type is assumed to be CV_8U
+	for(int i = 0; i < img.rows; i++){
+		for(int j = 0; j < img.cols; j++){
+			cnt += img.at<uchar>(i,j) > 10;
+		}
+	}
+	return cnt;
 }

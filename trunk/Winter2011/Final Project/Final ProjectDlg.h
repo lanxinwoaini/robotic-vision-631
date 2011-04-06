@@ -35,8 +35,8 @@ protected:
 	void OnTimer( UINT nIDEvent );
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedBtnSetPassword();
 	afx_msg void OnBnClickedSaveimg();
 	afx_msg void OnBnClickedStartentry();
 	afx_msg void OnBnClickedBtnSavetemplate();
+	afx_msg void OnNMCustomdrawThresholdslider(NMHDR *pNMHDR, LRESULT *pResult);
 };
