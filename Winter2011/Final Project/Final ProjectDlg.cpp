@@ -1,6 +1,13 @@
 // Final ProjectDlg.cpp : implementation file
 //
 
+//TODO
+/*
+	-debug and demo modes:
+		-for demo: none of the debug windows
+	-save and load last known threshold value (save with button, automatically load it)
+*/
+
 #include "stdafx.h"
 #include "Final Project.h"
 #include "Final ProjectDlg.h"
@@ -15,13 +22,14 @@
 
 //unsigned __stdcall getSign(void *ArgList);
 char getSign();
+unsigned diffDots = 0;
 int numWhitePixels(Mat img);
 
 VideoCapture myCamera(-1);
 Mat frame[2];
 Mat templates[10];
-Mat lastFrame;
-Mat handFrame, handFrame_thresh;
+Mat lastHandFrame, handFrame, handFrame_thresh, handFrame_resized;
+Mat lastTemplateFrame, templateFrame, templateFrame_thresh;
 Mat diffBig, diffSmall;
 CString myPassword;
 bool doAcquisition = false;
@@ -33,6 +41,7 @@ bool processing = false;
 HANDLE signThread=0;
 Rect handRegion = Rect(50, 50, 160, 160);
 Mat display;
+Mat result, resultT;
 
 int threshMin = 160;
 
@@ -170,9 +179,6 @@ BOOL CFinalProjectDlg::OnInitDialog()
 		s << i;
 		templates[i] = cv::imread(root+s.str()+jpg, CV_LOAD_IMAGE_GRAYSCALE);
 	}
-	namedWindow("template 1");
-	createTrackbar("Thresh Min: ", "template 1", &threshMin, 255);
-
 	
 	// Set timer for cam capture.
     SetTimer( ID_TIMER_CAPTURE, 30, 0 );
@@ -180,6 +186,13 @@ BOOL CFinalProjectDlg::OnInitDialog()
 	doAcquisition = true;
 
 	display.create(480, 640+handRegion.width, CV_8UC3);
+	
+	//check the camera to see if it's available
+	if(!myCamera.isOpened()){
+		CString msg("Camera did not initialize correctly! Please ensure that the camera is attached.");
+//		AfxMessageBox(msg);
+//		exit(1);
+	}
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -222,19 +235,18 @@ void CFinalProjectDlg::OnPaint()
 	}
 	else
 	{
+		//just in case we try to paint before we acquired an image;
 		if(doAcquisition && haveImage){
 						
 			for(int i = 0; i < frame[0].rows; i++)
 				for(int j = 0; j < frame[0].cols; j++)
-					display.at<Point3_<uchar>>(i, j) = frame[0].at<Point3_<uchar>>(i,j);
-
-			
+					display.at<Point3_<uchar>>(i, j) = frame[0].at<Point3_<uchar>>(i,j);			
 			
 			int col_off = frame[0].cols;
-			int row_off = handFrame.rows;
-			for(int i = 0; i < handFrame.rows; i++){
-				for(int j = col_off; j < handFrame.cols+col_off; j++){
-					int val = handFrame.at<uchar>(i,j-col_off);
+			int row_off = handFrame_resized.rows;
+			for(int i = 0; i < handFrame_resized.rows; i++){
+				for(int j = col_off; j < handFrame_resized.cols+col_off; j++){
+					int val = handFrame_resized.at<uchar>(i,j-col_off);
 					display.at<Point3_<uchar>>(i, j) = Point3_<uchar>(val, val, val);
 					val = handFrame_thresh.at<uchar>(i,j-col_off);
 					display.at<Point3_<uchar>>(i+row_off, j) = Point3_<uchar>(val, val, val);
@@ -244,18 +256,22 @@ void CFinalProjectDlg::OnPaint()
 				}
 			}
 
+			Point regionPoints[2];
+			regionPoints[0] = handRegion.tl();
+			regionPoints[1] = handRegion.br();
 			rectangle(display, Point(frame[0].cols,-1), Point(display.cols+1,display.rows),Scalar(100, 200, 50), 2);
 			rectangle(display, Point(frame[0].cols,handRegion.height), Point(display.cols+1,2*handRegion.height),Scalar(100, 200, 50), 2);
+			rectangle(display, regionPoints[0], regionPoints[1], Scalar(128, 255,0));
+			rectangle(display, Point(regionPoints[0].x-20, regionPoints[0].y-20),
+								Point(regionPoints[1].x+20, regionPoints[1].y+20), Scalar(255, 100, 0));
 			
 			Point handFrameTop(frame[0].cols, 0);
 			Point threshTop(frame[0].cols, handRegion.height);
 			Point diffTop(frame[0].cols, 2*handRegion.height);
 			putText(display, "Hand Frame", Point(handFrameTop.x+5, handFrameTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
-			putText(display, "Threshold", Point(threshTop.x+5, threshTop.y+13), CV_FONT_HERSHEY_PLAIN, .8, Scalar(0,128,0), 2);
-			putText(display, "Hand Frame", Point(threshTop.x+5, threshTop.y+30), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+			putText(display, "Template", Point(threshTop.x+5, threshTop.y+13), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
 			if(diffSmall.data)
-				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
-			
+				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);			
 
 			::SetDIBitsToDevice(
 			ImageDC->GetSafeHdc(), 0, 0,
@@ -287,32 +303,38 @@ void CFinalProjectDlg::OnTimer( UINT nIDEvent )
 		myCamera >> frame[0];
 		cvtColor(frame[0], frame[1], CV_RGB2GRAY);
 
-		if(lastFrame.data){
-			absdiff(lastFrame, frame[1], diffBig);
-			stringstream s;
-			s <<  numWhitePixels(diffBig);
-			resize(diffBig, diffSmall, Size(handRegion.width, handRegion.height));
-			putText(diffSmall, s.str(), Point(diffSmall.cols-40,10), CV_FONT_HERSHEY_PLAIN, .6, Scalar(128, 128, 128));
-		}
-
 		Size imgSize = frame[0].size();
 		int dtop = handRegion.y;
 		int dbottom = imgSize.height - (dtop+handRegion.height);
 		int dleft = handRegion.x;
 		int dright = imgSize.width - (dleft+handRegion.width);
 
-
 		frame[1].adjustROI(-dtop, -dbottom, -dleft, -dright);
-		frame[1].copyTo(handFrame);
+		frame[1].copyTo(templateFrame);
 		frame[1].adjustROI(dtop, dbottom, dleft, dright);
-		threshold(handFrame, handFrame_thresh, threshMin, 255, CV_THRESH_BINARY);		
 
-		rectangle(frame[0], handRegion.tl(), handRegion.br(), Scalar(128, 255,0));
-		Mat img = cv::imread("Templates\\1.jpg", CV_LOAD_IMAGE_GRAYSCALE);
-		threshold(img, templates[1], threshMin, 255, CV_THRESH_BINARY);
-		imshow("template 1", templates[1]);
-		frame[1].copyTo(lastFrame);
+		frame[1].adjustROI(-dtop+20, -dbottom+20, -dleft+20, -dright+20);
+		frame[1].copyTo(handFrame);
+		frame[1].adjustROI(dtop-20, dbottom-20, dleft-20, dright-20);
+
+		//for drawing what we see in the bigger hand frame
+		resize(handFrame, handFrame_resized, templateFrame.size());
+		threshold(handFrame, handFrame_thresh, threshMin, 255, CV_THRESH_BINARY);	
+
+		int numDots = 0;
+		if(lastHandFrame.data){
+			absdiff(lastHandFrame, handFrame, diffSmall);
+			diffDots = numWhitePixels(diffSmall);
+			stringstream s;
+			s <<  diffDots;
+			//resize(diffBig, diffSmall, Size(handRegion.width, handRegion.height));
+			putText(diffSmall, s.str(), Point(diffSmall.cols-40,10), CV_FONT_HERSHEY_PLAIN, .6, Scalar(128, 128, 128));
+		}	
+		
+		handFrame.copyTo(lastHandFrame);
 		haveImage = true;
+
+
 		this->InvalidateRect(DispRect, FALSE); // Initiate redrawing of Images for display
     }
 }
@@ -344,7 +366,7 @@ void CFinalProjectDlg::OnBnClickedStartentry()
 		AfxMessageBox(s);
 	}
 }
-Mat result, resultT;
+
 //unsigned __stdcall getSign(void *ArgList)
 char getSign()
 {
@@ -372,7 +394,7 @@ void CFinalProjectDlg::OnBnClickedBtnSavetemplate()
 	this->GetDlgItemText(IDC_FILENAME, fileString);
 	CT2CA pszConvertedAnsiString (fileString);
 	std::string nonCString (pszConvertedAnsiString);
-	imwrite("Templates\\"+nonCString, handFrame);
+	imwrite("Templates\\"+nonCString, handFrame_thresh);
 }
 
 void CFinalProjectDlg::OnNMCustomdrawThresholdslider(NMHDR *pNMHDR, LRESULT *pResult)
