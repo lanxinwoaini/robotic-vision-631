@@ -21,6 +21,10 @@
 #endif
 
 //unsigned __stdcall getSign(void *ArgList);
+extern string modeString;
+extern string currentEntry;
+extern unsigned MODE;
+extern void handleFrame();
 char getSign();
 unsigned diffDots = 0;
 int numWhitePixels(Mat img);
@@ -270,8 +274,28 @@ void CFinalProjectDlg::OnPaint()
 			Point diffTop(frame[0].cols, 2*handRegion.height);
 			putText(display, "Hand Frame", Point(handFrameTop.x+5, handFrameTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
 			putText(display, "Template", Point(threshTop.x+5, threshTop.y+13), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
-			if(diffSmall.data)
-				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);			
+			if(diffSmall.data){
+				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+				stringstream s;
+				s << diffDots;
+				putText(display, s.str(), Point(diffTop.x+diffSmall.cols-40,diffTop.y+10), CV_FONT_HERSHEY_PLAIN, .6, Scalar(128, 128, 128));
+			}
+
+			if(MODE != NOT_SIGNING){
+				putText(display, modeString, Point(5, 25), CV_FONT_HERSHEY_PLAIN, 1.5, Scalar(255,200,100), 2);
+				Point charPoint(20, 460);
+				CT2CA pszConvertedAnsiString (myPassword);
+				std::string nonCString (pszConvertedAnsiString);
+				putText(display, nonCString, Point(charPoint.x, charPoint.y - 70), CV_FONT_HERSHEY_TRIPLEX, 1.8, Scalar(100,255,100), 2);
+				putText(display, currentEntry, charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(25,25,255), 2);
+				charPoint.x += 40*currentEntry.length()-10;
+				putText(display, "_", charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(0,0,255), 2);
+				charPoint.x += 40;
+				string toGo = "";
+				for(int i = 1; i < myPassword.GetLength() - currentEntry.length(); i++)
+					toGo += "_";
+				putText(display, toGo, charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(0,255,0), 2);
+			}
 
 			::SetDIBitsToDevice(
 			ImageDC->GetSafeHdc(), 0, 0,
@@ -323,18 +347,16 @@ void CFinalProjectDlg::OnTimer( UINT nIDEvent )
 
 		int numDots = 0;
 		if(lastHandFrame.data){
-			absdiff(lastHandFrame, handFrame, diffSmall);
-			diffDots = numWhitePixels(diffSmall);
-			stringstream s;
-			s <<  diffDots;
-			//resize(diffBig, diffSmall, Size(handRegion.width, handRegion.height));
-			putText(diffSmall, s.str(), Point(diffSmall.cols-40,10), CV_FONT_HERSHEY_PLAIN, .6, Scalar(128, 128, 128));
+			absdiff(lastHandFrame, handFrame, diffBig);
+			diffDots = numWhitePixels(diffBig);
+			resize(diffBig, diffSmall, handFrame_resized.size());
 		}	
 		
 		handFrame.copyTo(lastHandFrame);
 		haveImage = true;
 
-
+		//depending on what state we're in this frame, handle the state that we're in
+		handleFrame();
 		this->InvalidateRect(DispRect, FALSE); // Initiate redrawing of Images for display
     }
 }
@@ -355,11 +377,13 @@ void CFinalProjectDlg::OnBnClickedStartentry()
 		CString s("Start Signing");		//Stop Signing was just clicked
 		SetDlgItemText(IDC_STARTENTRY, s);
 		signing = !signing;
+		MODE = NOT_SIGNING;
 	}
 	else if(myPassword.GetLength() != 0){
 		CString s("Stop Signing");		//Start Signing was just clicked
 		SetDlgItemText(IDC_STARTENTRY, s);
 		signing = !signing;
+		MODE = WAIT_MVMT;
 	}
 	else{
 		CString s("Please enter a password before signing.");
@@ -378,8 +402,8 @@ char getSign()
 		minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
 		norm(result);
 		threshold(result, resultT, 250, 255, CV_THRESH_BINARY_INV);
-		imshow("adf", result);
-		imshow("adfT", resultT);
+		//imshow("adf", result);
+		//imshow("adfT", resultT);
 		waitKey(10);
 //		if(resultT.at<uchar>(minLoc.y, minLoc.x) != 0)
 //			AfxMessageBox((LPCTSTR)"Found template!");
