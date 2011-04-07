@@ -14,7 +14,7 @@ unsigned MODE = NOT_SIGNING;
 unsigned delayCounter = 0;
 unsigned entryIndex = 0;
 string modeString;
-string currentEntry = "fd";
+string currentEntry = "";
 
 void handleChar(char c)
 {
@@ -29,7 +29,8 @@ void handleFrame()
 			modeString = "Not Signing!";	
 			if(currentEntry.length() > 0 || entryIndex != 0){
 				entryIndex = 0;
-			//	currentEntry.clear();
+				currentEntry.clear();
+				delayCounter = 0;
 			}
 			break;
 		case WAIT_MVMT:
@@ -63,7 +64,7 @@ void handleFrame()
 				delayCounter = 0;
 			}
 			delayCounter++;
-			if(delayCounter == ONE_SECOND*2){
+			if(delayCounter == ONE_SECOND){
 				delayCounter = 0;
 				MODE = NO_RESULT;
 			}
