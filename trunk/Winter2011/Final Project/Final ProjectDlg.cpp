@@ -32,7 +32,7 @@ int numWhitePixels(Mat img);
 VideoCapture myCamera(-1);
 Mat frame[2];
 Mat templates[10];
-Mat lastHandFrame, handFrame, handFrame_thresh, handFrame_resized;
+Mat lastHandFrame, handFrame, handFrame_resized;
 Mat lastTemplateFrame, templateFrame, templateFrame_thresh;
 Mat diffBig, diffSmall;
 CString myPassword;
@@ -47,7 +47,7 @@ Rect handRegion = Rect(50, 50, 160, 160);
 Mat display;
 Mat result, resultT;
 
-int threshMin = 160;
+int threshMin = 130;
 
 
 // CAboutDlg dialog used for App About
@@ -252,7 +252,7 @@ void CFinalProjectDlg::OnPaint()
 				for(int j = col_off; j < handFrame_resized.cols+col_off; j++){
 					int val = handFrame_resized.at<uchar>(i,j-col_off);
 					display.at<Point3_<uchar>>(i, j) = Point3_<uchar>(val, val, val);
-					val = handFrame_thresh.at<uchar>(i,j-col_off);
+					val = templateFrame_thresh.at<uchar>(i,j-col_off);
 					display.at<Point3_<uchar>>(i+row_off, j) = Point3_<uchar>(val, val, val);
 					if(diffSmall.data)
 						val = diffSmall.at<uchar>(i, j-col_off);
@@ -272,10 +272,10 @@ void CFinalProjectDlg::OnPaint()
 			Point handFrameTop(frame[0].cols, 0);
 			Point threshTop(frame[0].cols, handRegion.height);
 			Point diffTop(frame[0].cols, 2*handRegion.height);
-			putText(display, "Hand Frame", Point(handFrameTop.x+5, handFrameTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
-			putText(display, "Template", Point(threshTop.x+5, threshTop.y+13), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+			putText(display, "Hand Frame", Point(handFrameTop.x+5, handFrameTop.y+20), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(0,128,0), 2);
+			putText(display, "Template", Point(threshTop.x+5, threshTop.y+18), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(0,128,0), 2);
 			if(diffSmall.data){
-				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+15), CV_FONT_HERSHEY_PLAIN, 1.0, Scalar(0,128,0), 2);
+				putText(display, "Diff Image", Point(diffTop.x+5,diffTop.y+20), CV_FONT_HERSHEY_PLAIN, 1.2, Scalar(0,128,0), 2);
 				stringstream s;
 				s << diffDots;
 				putText(display, s.str(), Point(diffTop.x+diffSmall.cols-40,diffTop.y+10), CV_FONT_HERSHEY_PLAIN, .6, Scalar(128, 128, 128));
@@ -343,7 +343,9 @@ void CFinalProjectDlg::OnTimer( UINT nIDEvent )
 
 		//for drawing what we see in the bigger hand frame
 		resize(handFrame, handFrame_resized, templateFrame.size());
-		threshold(handFrame, handFrame_thresh, threshMin, 255, CV_THRESH_BINARY);	
+		
+		threshold(templateFrame, templateFrame_thresh, threshMin, 255, CV_THRESH_BINARY);
+		
 
 		int numDots = 0;
 		if(lastHandFrame.data){
@@ -418,7 +420,7 @@ void CFinalProjectDlg::OnBnClickedBtnSavetemplate()
 	this->GetDlgItemText(IDC_FILENAME, fileString);
 	CT2CA pszConvertedAnsiString (fileString);
 	std::string nonCString (pszConvertedAnsiString);
-	imwrite("Templates\\"+nonCString, handFrame_thresh);
+	imwrite("Templates\\"+nonCString, templateFrame_thresh);
 }
 
 void CFinalProjectDlg::OnNMCustomdrawThresholdslider(NMHDR *pNMHDR, LRESULT *pResult)
