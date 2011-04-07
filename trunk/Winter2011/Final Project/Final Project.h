@@ -17,6 +17,16 @@
 #include <cxmisc.h>
 #include <highgui.h>
 
+//define all of the possible modes
+#define NOT_SIGNING			0x0
+#define WAIT_MVMT			0x1
+#define WAIT_STILL			0x2
+#define CHECK_TEMPLATES		0x4
+#define DISPLAY_RESULT		0x8
+#define NO_RESULT			0x10
+
+#define NUMDOTS_MVMT		5000
+
 using namespace cv;
 using namespace std;
 
