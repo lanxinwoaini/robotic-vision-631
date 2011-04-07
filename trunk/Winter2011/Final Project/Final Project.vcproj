@@ -196,6 +196,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\handleState.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
