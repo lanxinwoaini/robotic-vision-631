@@ -20,6 +20,15 @@
 #define new DEBUG_NEW
 #endif
 
+#define TEMPLATES_IN_SET 34
+char templateNames[TEMPLATES_IN_SET] = 
+	{'0','1','2','3','4','5','6',
+	'7','8','9','a','b','c','d',
+	'e','f','g','h','i','k','l',
+	'm','n','o','p','q','r','s',
+	't','u','v','w','x','y'};
+
+
 //unsigned __stdcall getSign(void *ArgList);
 extern string modeString;
 extern string currentEntry;
@@ -406,21 +415,30 @@ char getSign()
 {
 	double minVal=0, maxVal=0;
 	Point minLoc, maxLoc;
+	int best_template = -1;
+	bool find_min = true;
+	double best_value = find_min ? 1e10 : 0;
+	
 	//while(1){
-	for(int i = 1; i < 2; i++){
-		matchTemplate(frame[1], templates[i], result, CV_TM_CCORR_NORMED);
+	for(int i = 0; i < TEMPLATES_IN_SET; i++){
+		matchTemplate(frame[1], templates[i], result, CV_TM_SQDIFF_NORMED);
 		minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
-		norm(result);
-		threshold(result, resultT, 250, 255, CV_THRESH_BINARY_INV);
-		//imshow("adf", result);
-		//imshow("adfT", resultT);
-		waitKey(10);
+	
+		if((find_min && minVal < best_value) || (!find_min && maxVal > best_value))
+		{
+			best_value = (find_min ? minVal : maxVal);
+			best_template = i;
+		}
 //		if(resultT.at<uchar>(minLoc.y, minLoc.x) != 0)
 //			AfxMessageBox((LPCTSTR)"Found template!");
 	}
+	
+	//assign char
+	char result = templateNames[best_template];
+
 	//}
 	processing = false;
-	return 0;
+	return result;
 }
 void CFinalProjectDlg::OnBnClickedBtnSavetemplate()
 {
