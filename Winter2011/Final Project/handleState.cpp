@@ -8,7 +8,10 @@
 //external variables relating to gathered data
 extern CString myPassword;
 extern unsigned diffDots;
-extern char getSign();
+//extern char getSign();
+extern bool processing;
+extern char mySign;
+bool startedProcessing = false;
 
 unsigned MODE = NOT_SIGNING;
 unsigned delayCounter = 0;
@@ -36,7 +39,7 @@ void handleFrame()
 		case WAIT_MVMT:
 			if(diffDots >= NUMDOTS_MVMT-1000){
 				delayCounter++;
-				if(delayCounter == ONE_SECOND/2){
+				if(delayCounter == ONE_SECOND/4){
 					MODE = WAIT_STILL;
 					delayCounter = 0;
 				}
@@ -47,7 +50,7 @@ void handleFrame()
 		case WAIT_STILL:		//wait for several consecutive frames of no movement
 			if(diffDots < NUMDOTS_MVMT+1000){
 				delayCounter++;
-				if(delayCounter == ONE_SECOND/2){
+				if(delayCounter == ONE_SECOND){
 					MODE = CHECK_TEMPLATES;
 					delayCounter = 0;
 				}
@@ -57,23 +60,25 @@ void handleFrame()
 			modeString = "Waiting for still.";
 			break;
 		case CHECK_TEMPLATES:
-			c = getSign();
-			if(c != 0){
-				currentEntry += c;
-				MODE = DISPLAY_RESULT;
-				delayCounter = 0;
-			}
-			delayCounter++;
-			if(delayCounter == ONE_SECOND){
-				delayCounter = 0;
-				MODE = NO_RESULT;
-			}
 			modeString = "Checking frame against templates.";
+			if(!startedProcessing){
+				processing = true;		//flag that the processing thread is waiting on
+				startedProcessing = true;
+			}
+			//wait for thread to have a value
+			if(!processing){
+				//get the result
+				c = mySign;
+				currentEntry += c;
+				startedProcessing = false;
+				MODE = DISPLAY_RESULT;
+			}
+			
 			break;
 		case DISPLAY_RESULT:
 			modeString = "Displaying the result.";
 			delayCounter++;
-			if(delayCounter == ONE_SECOND*2){
+			if(delayCounter == ONE_SECOND){
 				delayCounter = 0;
 				MODE = WAIT_MVMT;
 			}
