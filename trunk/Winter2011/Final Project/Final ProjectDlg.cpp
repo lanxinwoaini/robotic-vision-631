@@ -28,13 +28,10 @@ char templateNames[TEMPLATES_IN_SET] =
 	'm','n','o','p','q','r','s',
 	't','u','v','w','x','y'};
 
-
-unsigned __stdcall getSign(void *ArgList);
 extern string modeString;
 extern string currentEntry;
 extern unsigned MODE;
 extern void handleFrame();
-//char getSign();
 unsigned diffDots = 0;
 int numWhitePixels(Mat img);
 
@@ -44,17 +41,28 @@ Mat templates[TEMPLATES_IN_SET];
 Mat lastHandFrame, handFrame_color, handFrame_resized, handFrame_bw;
 Mat lastTemplateFrame, templateFrame_color, templateFrame_bw, templateFrame_thresh;
 Mat diffBig, diffSmall;
+Mat procBuffer;
 CString myPassword;
 bool doAcquisition = false;
 bool haveImage = false;
-const UINT ID_TIMER_CAPTURE = 0x1000;
 bool signing = false;
 bool debug = true;
-bool processing = false;
-HANDLE signThread=0;
+
+const UINT ID_TIMER_CAPTURE = 0x1000;
 Rect handRegion = Rect(50, 50, 160, 160);
 Mat display;
 Mat result, resultT;
+
+//variables for the thread
+char mySign=0;
+bool processing = false;
+//char getSign();
+unsigned __stdcall getSign(void *ArgList);
+unsigned int procThreadID;
+//start processing thread now, program will signal to process a frame
+HANDLE signThread = (HANDLE)_beginthreadex( NULL, 0, &getSign, NULL, 0, &procThreadID);
+HANDLE signLock = CreateMutex (NULL, FALSE, NULL);;
+
 
 int threshMin = 130;
 
@@ -195,7 +203,6 @@ BOOL CFinalProjectDlg::OnInitDialog()
 	
 	// Set timer for cam capture.
     SetTimer( ID_TIMER_CAPTURE, 30, 0 );
-	//cameraThread = (HANDLE)_beginthreadex( NULL, 0, &captureFrames, NULL, 0, &cameraThreadID );
 	doAcquisition = true;
 
 	display.create(480, 640+handRegion.width, CV_8UC3);
@@ -278,6 +285,17 @@ void CFinalProjectDlg::OnPaint()
 			rectangle(display, regionPoints[0], regionPoints[1], Scalar(128, 255,0));
 			rectangle(display, Point(regionPoints[0].x-20, regionPoints[0].y-20),
 								Point(regionPoints[1].x+20, regionPoints[1].y+20), Scalar(255, 100, 0));
+
+			//just display the still frame that we're processing
+			if(processing && procBuffer.data){
+				int px = regionPoints[0].x-19;
+				int py = regionPoints[0].y-19;
+				for(int i = py; i < handFrame_color.rows+py-1; i++){
+					for(int j = px; j < handFrame_color.cols+px-1; j++)
+						display.at<Point3_<uchar>>(i,j) = procBuffer.at<Point3_<uchar>>(i-py, j-px);
+				}
+
+			}
 			
 			Point handFrameTop(frame[0].cols, 0);
 			Point threshTop(frame[0].cols, handRegion.height);
@@ -354,7 +372,10 @@ void CFinalProjectDlg::OnTimer( UINT nIDEvent )
 		frame[1].adjustROI(dtop, dbottom, dleft, dright);
 
 		frame[0].adjustROI(-dtop+20, -dbottom+20, -dleft+20, -dright+20);
+		//make sure we synchronize with processing thread
+		WaitForSingleObject(signLock, INFINITE);
 		frame[0].copyTo(handFrame_color);
+		ReleaseMutex(signLock);
 		frame[0].adjustROI(dtop-20, dbottom-20, dleft-20, dright-20);
 
 		frame[1].adjustROI(-dtop+20, -dbottom+20, -dleft+20, -dright+20);
@@ -414,33 +435,36 @@ void CFinalProjectDlg::OnBnClickedStartentry()
 
 unsigned __stdcall getSign(void *ArgList)
 //char getSign()
-{
-	double minVal=0, maxVal=0;
-	Point minLoc, maxLoc;
-	int best_template = -1;
-	bool find_min = true;
-	double best_value = find_min ? 1e10 : 0;
-	
-	//while(1){
-	for(int i = 0; i < TEMPLATES_IN_SET; i++){
-		matchTemplate(frame[0], templates[i], result, CV_TM_SQDIFF_NORMED);
-		minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
-	
-		if((find_min && minVal < best_value) || (!find_min && maxVal > best_value))
-		{
-			best_value = (find_min ? minVal : maxVal);
-			best_template = i;
+{	
+	while(1){
+		double minVal=0, maxVal=0;
+		Point minLoc, maxLoc;
+		int best_template = -1;
+		bool find_min = true;
+		double best_value = find_min ? 1e10 : 0;
+		while(!processing){Sleep(10);}	//wait for state function to signal
+
+		//synchronize so that we grab the correct image
+		WaitForSingleObject(signLock, INFINITE);
+		handFrame_color.copyTo(procBuffer);
+		ReleaseMutex(signLock);
+		
+		for(int i = 0; i < TEMPLATES_IN_SET; i++){
+			matchTemplate(procBuffer, templates[i], result, CV_TM_SQDIFF_NORMED);
+			minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
+		
+			if((find_min && minVal < best_value) || (!find_min && maxVal > best_value))
+			{
+				best_value = (find_min ? minVal : maxVal);
+				best_template = i;
+			}
 		}
-//		if(resultT.at<uchar>(minLoc.y, minLoc.x) != 0)
-//			AfxMessageBox((LPCTSTR)"Found template!");
+		//assign char
+		mySign = templateNames[best_template];
+		processing = false;
 	}
 	
-	//assign char
-	char result = templateNames[best_template];
-
-	//}
-	processing = false;
-	return result;
+	return 0;
 }
 void CFinalProjectDlg::OnBnClickedBtnSavetemplate()
 {
