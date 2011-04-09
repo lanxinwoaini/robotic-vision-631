@@ -29,18 +29,18 @@ char templateNames[TEMPLATES_IN_SET] =
 	't','u','v','w','x','y'};
 
 
-//unsigned __stdcall getSign(void *ArgList);
+unsigned __stdcall getSign(void *ArgList);
 extern string modeString;
 extern string currentEntry;
 extern unsigned MODE;
 extern void handleFrame();
-char getSign();
+//char getSign();
 unsigned diffDots = 0;
 int numWhitePixels(Mat img);
 
 VideoCapture myCamera(-1);
 Mat frame[2];
-Mat templates[10];
+Mat templates[TEMPLATES_IN_SET];
 Mat lastHandFrame, handFrame_color, handFrame_resized, handFrame_bw;
 Mat lastTemplateFrame, templateFrame_color, templateFrame_bw, templateFrame_thresh;
 Mat diffBig, diffSmall;
@@ -185,12 +185,12 @@ BOOL CFinalProjectDlg::OnInitDialog()
       pheader->biWidth * pheader->biHeight * ( pheader->biBitCount / 8 );
 
 
-	std::string root = "Templates\\";
-	std::string jpg = ".jpg";
-	for(int i = 0; i < 10; i++){
+	std::string root = "Templates\\colorSet\\";
+	std::string jpg = "_3.jpg";
+	for(int i = 0; i < TEMPLATES_IN_SET; i++){
 		std::stringstream s;
-		s << i;
-		templates[i] = cv::imread(root+s.str()+jpg, CV_LOAD_IMAGE_GRAYSCALE);
+		s << templateNames[i];
+		templates[i] = cv::imread(root+s.str()+jpg, CV_LOAD_IMAGE_COLOR);
 	}
 	
 	// Set timer for cam capture.
@@ -302,8 +302,10 @@ void CFinalProjectDlg::OnPaint()
 				putText(display, "_", charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(0,0,255), 2);
 				charPoint.x += 40;
 				string toGo = "";
-				for(int i = 1; i < myPassword.GetLength() - currentEntry.length(); i++)
-					toGo += "_";
+				int underscoreLength = myPassword.GetLength() - currentEntry.length();
+				if(underscoreLength >0)
+					for(int i = 1; i < underscoreLength; i++)
+						toGo += "_";
 				putText(display, toGo, charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(0,255,0), 2);
 			}
 
@@ -410,8 +412,8 @@ void CFinalProjectDlg::OnBnClickedStartentry()
 	}
 }
 
-//unsigned __stdcall getSign(void *ArgList)
-char getSign()
+unsigned __stdcall getSign(void *ArgList)
+//char getSign()
 {
 	double minVal=0, maxVal=0;
 	Point minLoc, maxLoc;
@@ -421,7 +423,7 @@ char getSign()
 	
 	//while(1){
 	for(int i = 0; i < TEMPLATES_IN_SET; i++){
-		matchTemplate(frame[1], templates[i], result, CV_TM_SQDIFF_NORMED);
+		matchTemplate(frame[0], templates[i], result, CV_TM_SQDIFF_NORMED);
 		minMaxLoc(result, &minVal, &maxVal, &minLoc, &maxLoc);
 	
 		if((find_min && minVal < best_value) || (!find_min && maxVal > best_value))
