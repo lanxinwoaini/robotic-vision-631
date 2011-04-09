@@ -32,8 +32,8 @@ int numWhitePixels(Mat img);
 VideoCapture myCamera(-1);
 Mat frame[2];
 Mat templates[10];
-Mat lastHandFrame, handFrame, handFrame_resized;
-Mat lastTemplateFrame, templateFrame, templateFrame_thresh;
+Mat lastHandFrame, handFrame_color, handFrame_resized, handFrame_bw;
+Mat lastTemplateFrame, templateFrame_color, templateFrame_bw, templateFrame_thresh;
 Mat diffBig, diffSmall;
 CString myPassword;
 bool doAcquisition = false;
@@ -250,10 +250,11 @@ void CFinalProjectDlg::OnPaint()
 			int row_off = handFrame_resized.rows;
 			for(int i = 0; i < handFrame_resized.rows; i++){
 				for(int j = col_off; j < handFrame_resized.cols+col_off; j++){
-					int val = handFrame_resized.at<uchar>(i,j-col_off);
-					display.at<Point3_<uchar>>(i, j) = Point3_<uchar>(val, val, val);
-					val = templateFrame_thresh.at<uchar>(i,j-col_off);
-					display.at<Point3_<uchar>>(i+row_off, j) = Point3_<uchar>(val, val, val);
+					int val=0;
+					Point3_<uchar> cp = handFrame_resized.at<Point3_<uchar>>(i,j-col_off);
+					display.at<Point3_<uchar>>(i, j) = cp;
+					cp = templateFrame_color.at<Point3_<uchar>>(i,j-col_off);
+					display.at<Point3_<uchar>>(i+row_off, j) = cp;
 					if(diffSmall.data)
 						val = diffSmall.at<uchar>(i, j-col_off);
 					display.at<Point3_<uchar>>(i+2*row_off, j) = Point3_<uchar>(val, val, val);
@@ -333,28 +334,35 @@ void CFinalProjectDlg::OnTimer( UINT nIDEvent )
 		int dleft = handRegion.x;
 		int dright = imgSize.width - (dleft+handRegion.width);
 
+		frame[0].adjustROI(-dtop, -dbottom, -dleft, -dright);
+		frame[0].copyTo(templateFrame_color);
+		frame[0].adjustROI(dtop, dbottom, dleft, dright);
+
 		frame[1].adjustROI(-dtop, -dbottom, -dleft, -dright);
-		frame[1].copyTo(templateFrame);
+		frame[1].copyTo(templateFrame_bw);
 		frame[1].adjustROI(dtop, dbottom, dleft, dright);
 
+		frame[0].adjustROI(-dtop+20, -dbottom+20, -dleft+20, -dright+20);
+		frame[0].copyTo(handFrame_color);
+		frame[0].adjustROI(dtop-20, dbottom-20, dleft-20, dright-20);
+
 		frame[1].adjustROI(-dtop+20, -dbottom+20, -dleft+20, -dright+20);
-		frame[1].copyTo(handFrame);
+		frame[1].copyTo(handFrame_bw);
 		frame[1].adjustROI(dtop-20, dbottom-20, dleft-20, dright-20);
 
 		//for drawing what we see in the bigger hand frame
-		resize(handFrame, handFrame_resized, templateFrame.size());
+		resize(handFrame_color, handFrame_resized, templateFrame_bw.size());
 		
-		threshold(templateFrame, templateFrame_thresh, threshMin, 255, CV_THRESH_BINARY);
-		
+		threshold(templateFrame_bw, templateFrame_thresh, threshMin, 255, CV_THRESH_BINARY);
 
 		int numDots = 0;
 		if(lastHandFrame.data){
-			absdiff(lastHandFrame, handFrame, diffBig);
+			absdiff(lastHandFrame, handFrame_bw, diffBig);
 			diffDots = numWhitePixels(diffBig);
 			resize(diffBig, diffSmall, handFrame_resized.size());
 		}	
 		
-		handFrame.copyTo(lastHandFrame);
+		handFrame_bw.copyTo(lastHandFrame);
 		haveImage = true;
 
 		//depending on what state we're in this frame, handle the state that we're in
@@ -420,7 +428,7 @@ void CFinalProjectDlg::OnBnClickedBtnSavetemplate()
 	this->GetDlgItemText(IDC_FILENAME, fileString);
 	CT2CA pszConvertedAnsiString (fileString);
 	std::string nonCString (pszConvertedAnsiString);
-	imwrite("Templates\\"+nonCString, templateFrame_thresh);
+	imwrite("Templates\\"+nonCString, templateFrame_color);
 }
 
 void CFinalProjectDlg::OnNMCustomdrawThresholdslider(NMHDR *pNMHDR, LRESULT *pResult)
