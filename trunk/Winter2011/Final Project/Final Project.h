@@ -25,7 +25,7 @@
 #define DISPLAY_RESULT		0x8
 #define NO_RESULT			0x10
 
-#define NUMDOTS_MVMT		5000
+#define NUMDOTS_MVMT		3000
 
 using namespace cv;
 using namespace std;
