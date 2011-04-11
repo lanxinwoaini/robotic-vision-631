@@ -20,13 +20,13 @@
 #define new DEBUG_NEW
 #endif
 
-#define TEMPLATES_IN_SET 34
+#define TEMPLATES_IN_SET 29
 char templateNames[TEMPLATES_IN_SET] = 
 	{'0','1','2','3','4','5','6',
-	'7','8','9','a','b','c','d',
-	'e','f','g','h','i','k','l',
-	'm','n','o','p','q','r','s',
-	't','u','v','w','x','y'};
+	'7','8','9','a','b','c',
+	'e','g','h','i','k','l',
+	'm','n','p','q','r','s',
+	't','u','x','y'};
 
 extern string modeString;
 extern string currentEntry;
@@ -52,6 +52,8 @@ const UINT ID_TIMER_CAPTURE = 0x1000;
 Rect handRegion = Rect(50, 50, 160, 160);
 Mat display;
 Mat result, resultT;
+
+extern void handleChar(char &c);
 
 //variables for the thread
 char mySign=0;
@@ -193,8 +195,8 @@ BOOL CFinalProjectDlg::OnInitDialog()
       pheader->biWidth * pheader->biHeight * ( pheader->biBitCount / 8 );
 
 
-	std::string root = "Templates\\colorSet\\";
-	std::string jpg = "_3.jpg";
+	std::string root = "Templates\\distinctSigns\\";
+	std::string jpg = "_5.jpg";
 	for(int i = 0; i < TEMPLATES_IN_SET; i++){
 		std::stringstream s;
 		s << templateNames[i];
@@ -257,6 +259,26 @@ void CFinalProjectDlg::OnPaint()
 	{
 		//just in case we try to paint before we acquired an image;
 		if(doAcquisition && haveImage){
+			int tIndex = -1;
+			CT2CA pszConvertedAnsiString (myPassword);
+			std::string nonCString (pszConvertedAnsiString);
+
+			if(MODE != NOT_SIGNING){
+				char c = nonCString[currentEntry.length()];
+				switch(c){
+					case 'o': c = '0'; break;
+					case 'w': c = '6'; break;
+					case 'f': c = '9'; break;
+					case 'v': c = '2'; break;
+					case 'd': c = '1'; break;
+				}
+				for(int i = 0; i < TEMPLATES_IN_SET; i++){
+					tIndex = i;
+					if(templateNames[i] == c)
+						break;	
+				}
+				//imshow("Template", templates[tIndex]);
+			}
 						
 			for(int i = 0; i < frame[0].rows; i++)
 				for(int j = 0; j < frame[0].cols; j++)
@@ -267,10 +289,18 @@ void CFinalProjectDlg::OnPaint()
 			for(int i = 0; i < handFrame_resized.rows; i++){
 				for(int j = col_off; j < handFrame_resized.cols+col_off; j++){
 					int val=0;
-					Point3_<uchar> cp = handFrame_resized.at<Point3_<uchar>>(i,j-col_off);
-					display.at<Point3_<uchar>>(i, j) = cp;
+					Point3_<uchar> cp;
+					if(MODE == NOT_SIGNING){
+						cp = handFrame_resized.at<Point3_<uchar>>(i,j-col_off);
+						display.at<Point3_<uchar>>(i, j) = cp;
+					}
+					else{
+						cp = templates[tIndex].at<Point3_<uchar>>(i,j-col_off);
+						display.at<Point3_<uchar>>(i, j) = cp;
+					}
 					cp = templateFrame_color.at<Point3_<uchar>>(i,j-col_off);
-					display.at<Point3_<uchar>>(i+row_off, j) = cp;
+					display.at<Point3_<uchar>>(i+row_off, j) = cp;					
+					
 					if(diffSmall.data)
 						val = diffSmall.at<uchar>(i, j-col_off);
 					display.at<Point3_<uchar>>(i+2*row_off, j) = Point3_<uchar>(val, val, val);
@@ -312,19 +342,19 @@ void CFinalProjectDlg::OnPaint()
 			if(MODE != NOT_SIGNING){
 				putText(display, modeString, Point(5, 25), CV_FONT_HERSHEY_PLAIN, 1.5, Scalar(255,200,100), 2);
 				Point charPoint(20, 460);
-				CT2CA pszConvertedAnsiString (myPassword);
-				std::string nonCString (pszConvertedAnsiString);
-				putText(display, nonCString, Point(charPoint.x, charPoint.y - 70), CV_FONT_HERSHEY_TRIPLEX, 1.8, Scalar(100,255,100), 2);
-				putText(display, currentEntry, charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(25,25,255), 2);
-				charPoint.x += 40*currentEntry.length()-10;
-				putText(display, "_", charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(0,0,255), 2);
-				charPoint.x += 40;
-				string toGo = "";
-				int underscoreLength = myPassword.GetLength() - currentEntry.length();
-				if(underscoreLength >0)
-					for(int i = 1; i < underscoreLength; i++)
-						toGo += "_";
-				putText(display, toGo, charPoint, CV_FONT_HERSHEY_TRIPLEX, 2.0, Scalar(0,255,0), 2);
+				for(int i = 0; i < nonCString.length(); i++){
+					string t = nonCString.substr(i,1);
+						
+					putText(display, t, Point(charPoint.x, charPoint.y - 70), CV_FONT_HERSHEY_TRIPLEX, 1.8, Scalar(100,255,100), 2);
+					if(i < currentEntry.length()){
+						string p = currentEntry.substr(i,1);
+						putText(display, p, charPoint, CV_FONT_HERSHEY_TRIPLEX, 1.8, Scalar(25,25,255), 2);
+					}
+					else{
+						putText(display, "_", charPoint, CV_FONT_HERSHEY_TRIPLEX, 1.8, Scalar(0,255,0), 2);
+					}
+					charPoint.x += 40;
+				}
 			}
 
 			::SetDIBitsToDevice(

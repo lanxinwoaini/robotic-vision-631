@@ -19,9 +19,37 @@ unsigned entryIndex = 0;
 string modeString;
 string currentEntry = "";
 
-void handleChar(char c)
+void handleChar(char &c)
 {
-
+	char p =  myPassword.GetAt(currentEntry.length());
+	switch(p){
+		case 'v':
+		case '2':	
+			if(c=='2')
+				c=p;
+			break;
+		case '0':
+		case 'o':
+			if(c=='0')
+				c=p;
+			break;
+		case '6':
+		case 'w':
+			if(c=='6')
+				c=p;
+			break;
+		case '9':
+		case 'f':
+			if(c=='9')
+				c=p;
+			break;
+		case '1':
+		case 'd':
+			if(c=='1')
+				c=p;
+			break;
+		default: ;
+	}
 }
 
 void handleFrame()
@@ -69,6 +97,7 @@ void handleFrame()
 			if(!processing){
 				//get the result
 				c = mySign;
+				handleChar(c);
 				currentEntry += c;
 				startedProcessing = false;
 				MODE = DISPLAY_RESULT;
@@ -78,7 +107,7 @@ void handleFrame()
 		case DISPLAY_RESULT:
 			modeString = "Displaying the result.";
 			delayCounter++;
-			if(delayCounter == ONE_SECOND){
+			if(delayCounter == ONE_SECOND/2){
 				delayCounter = 0;
 				MODE = WAIT_MVMT;
 			}
