@@ -1,0 +1,1 @@
+This project is part of a robotic vision class at BYU. We will be using a platform developed here at BYU based on a Virtex 4 FPGA that has be integrated to control a remote controlled car. The goal of the project is to enable the car to navigate through a field of obstacles autonomously and find a 'flag.'
